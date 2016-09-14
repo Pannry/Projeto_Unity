@@ -1,0 +1,177 @@
+fileFormatVersion: 2
+guid: f01c5dbcc14dd4aa0875ba53c750a8ba
+timeCreated: 1473802184
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Block:000061
+    100002: Block:000863
+    100004: Block:2d-arb-8
+    100006: Block:2d-arb-8 1
+    100008: "Block:BACIA SANIT\xC1RIA DECA CX ACOP VOGUE PLUS"
+    100010: Block:BWC-08
+    100012: Block:cama 1
+    100014: Block:cama 1 1
+    100016: Block:cama 1 2
+    100018: Block:f4
+    100020: Block:g
+    100022: Block:ml
+    100024: Block:P
+    100026: //RootNode
+    100028: Layer:WA_ALVENARIA
+    100030: Layer:WA_ESQUADRIA
+    100032: "Layer:WA_PROJE\xC7\xC3O"
+    100034: Layer:WA_VISTA 02
+    100036: Layer:WA_VISTA 03
+    100038: Layer:WA_VISTA 04
+    100040: Layer:WA_VISTA 04 1
+    100042: Layer:WA_VISTA 04 10
+    100044: Layer:WA_VISTA 04 11
+    100046: Layer:WA_VISTA 04 12
+    100048: Layer:WA_VISTA 04 13
+    100050: Layer:WA_VISTA 04 14
+    100052: Layer:WA_VISTA 04 2
+    100054: Layer:WA_VISTA 04 3
+    100056: Layer:WA_VISTA 04 4
+    100058: Layer:WA_VISTA 04 5
+    100060: Layer:WA_VISTA 04 6
+    100062: Layer:WA_VISTA 04 7
+    100064: Layer:WA_VISTA 04 8
+    100066: Layer:WA_VISTA 04 9
+    100068: Wall_Bathroom
+    100070: Wall_Fundo
+    100072: Wall_Lateral
+    100074: Wall_LivingRoom1
+    100076: Wall_LivingRoom2
+    100078: Wall_LivingRoom3
+    100080: Walls
+    100082: www
+    400000: Block:000061
+    400002: Block:000863
+    400004: Block:2d-arb-8
+    400006: Block:2d-arb-8 1
+    400008: "Block:BACIA SANIT\xC1RIA DECA CX ACOP VOGUE PLUS"
+    400010: Block:BWC-08
+    400012: Block:cama 1
+    400014: Block:cama 1 1
+    400016: Block:cama 1 2
+    400018: Block:f4
+    400020: Block:g
+    400022: Block:ml
+    400024: Block:P
+    400026: //RootNode
+    400028: Layer:WA_ALVENARIA
+    400030: Layer:WA_ESQUADRIA
+    400032: "Layer:WA_PROJE\xC7\xC3O"
+    400034: Layer:WA_VISTA 02
+    400036: Layer:WA_VISTA 03
+    400038: Layer:WA_VISTA 04
+    400040: Layer:WA_VISTA 04 1
+    400042: Layer:WA_VISTA 04 10
+    400044: Layer:WA_VISTA 04 11
+    400046: Layer:WA_VISTA 04 12
+    400048: Layer:WA_VISTA 04 13
+    400050: Layer:WA_VISTA 04 14
+    400052: Layer:WA_VISTA 04 2
+    400054: Layer:WA_VISTA 04 3
+    400056: Layer:WA_VISTA 04 4
+    400058: Layer:WA_VISTA 04 5
+    400060: Layer:WA_VISTA 04 6
+    400062: Layer:WA_VISTA 04 7
+    400064: Layer:WA_VISTA 04 8
+    400066: Layer:WA_VISTA 04 9
+    400068: Wall_Bathroom
+    400070: Wall_Fundo
+    400072: Wall_Lateral
+    400074: Wall_LivingRoom1
+    400076: Wall_LivingRoom2
+    400078: Wall_LivingRoom3
+    400080: Walls
+    400082: www
+    2300000: Layer:WA_VISTA 04 7
+    2300002: Wall_Bathroom
+    2300004: Wall_Fundo
+    2300006: Wall_Lateral
+    2300008: Wall_LivingRoom1
+    2300010: Wall_LivingRoom2
+    2300012: Wall_LivingRoom3
+    3300000: Layer:WA_VISTA 04 7
+    3300002: Wall_Bathroom
+    3300004: Wall_Fundo
+    3300006: Wall_Lateral
+    3300008: Wall_LivingRoom1
+    3300010: Wall_LivingRoom2
+    3300012: Wall_LivingRoom3
+    4300000: Layer:WA_VISTA 04
+    4300002: Wall_Bathroom
+    4300004: Wall_Fundo
+    4300006: Wall_Lateral
+    4300008: Wall_LivingRoom1
+    4300010: Wall_LivingRoom2
+    4300012: Wall_LivingRoom3
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
