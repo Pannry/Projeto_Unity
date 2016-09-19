@@ -26,7 +26,6 @@ public class mostrarParedes : MonoBehaviour {
 /*
 
 	void Update() {
-
 		if (Input.GetKeyDown(KeyCode.Z)) {
 			// show
 			// renderer.enabled = true;
