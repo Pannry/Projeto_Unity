@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\ChangeCameras.cs" />
      <Compile Include="Assets\Scripts\ClickEvent.cs" />
      <Compile Include="Assets\Scripts\mostrarParedes.cs" />
