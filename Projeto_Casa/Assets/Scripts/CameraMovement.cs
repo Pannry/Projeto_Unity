@@ -35,13 +35,12 @@ public class CameraMovement : MonoBehaviour {
 		if (Input.GetKey(KeyCode.DownArrow)){
 			transform.position += Vector3.back * speed * Time.deltaTime;
 		}
-		/*
-		if (Input.GetMouseButton (0)) {
+
+		/*if (Input.GetMouseButton (0)) {
 			rotationX += Input.GetAxis ("Mouse X") * sensX * Time.deltaTime;
 			rotationY += Input.GetAxis ("Mouse Y") * sensY * Time.deltaTime;
 			rotationY = Mathf.Clamp (rotationY, minY, maxY);
 			transform.localEulerAngles = new Vector3 (-rotationY, rotationX, 0);
-		}
-		*/
+		}*/
 	}
 }
