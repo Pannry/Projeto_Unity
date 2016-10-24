@@ -5,9 +5,12 @@ using UnityEngine.UI;
 
 public class Edge : MonoBehaviour
 {
-	public Edge ()
+	public int vertex;
+	public GameObject edge;
+	public Edge (GameObject e, int v)
 	{
-		
+		edge = e;
+		vertex = v;
 	}
 }
 

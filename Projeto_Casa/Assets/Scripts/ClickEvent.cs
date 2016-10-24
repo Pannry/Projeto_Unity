@@ -24,6 +24,7 @@
 		private GameObject[] squares;
 		// Aqui eh uma lista de nos, futuramente vai ser um grafo.
 		private LinkedList<Node> nodes;
+		private int totalNodes = 0;
 		// Construtor, seta o square como um array de 2 celulas e inicializa a lista de nos.
 		void Start () {
 			squares = new GameObject[2];
@@ -81,7 +82,8 @@
 			if(Input.GetButtonDown("Fire1") && option == index && tag == Tags.Planta() ){
 				GameObject obj=Instantiate(prefab[option - 1],new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
 				obj.transform.Rotate(new Vector3(90F,0F,0F));
-				nodes.AddLast (new Node (obj, obj.tag));
+				nodes.AddLast (new Node (obj, obj.tag,totalNodes.ToString()));
+				totalNodes++;
 			}
 		}
 
