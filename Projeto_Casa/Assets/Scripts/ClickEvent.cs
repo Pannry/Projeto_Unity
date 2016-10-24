@@ -153,7 +153,7 @@
 					lr.SetVertexCount(2);
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
 					lr.SetPosition(0,new Vector3(x,height,z));
-					Node.SearchNodeAndAddEdge (nodes,obj,lastObject);
+					Node.SearchNodeAndAddEdge (nodes,obj,lastObject,0);
 				}
 				// Arrasta o ultimo objeto criado.
 				if(lastObject != null){
@@ -171,7 +171,7 @@
 					Node.SearchNodeAndDestroyEdge (nodes, lastObject);
 					Destroy (lastObject);
 				}
-				Node.SearchNodeAndAddEdge (nodes,obj,lastObject);
+				Node.SearchNodeAndAddEdge (nodes,obj,lastObject,1);
 				LineRenderer lr = lastObject.GetComponent<LineRenderer>();
 				lr.SetPosition(1,new Vector3(x,height,z));
 				// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
@@ -192,8 +192,10 @@
 			Node aux;
 			foreach (Node n in nodes) {
 				if (n.Compare (lastObject)) {
-					aux = n;
-					break;
+					foreach (Edge e in n.GetEdges()) {
+						LineRenderer lr = e.edge.GetComponent<LineRenderer> ();
+						lr.SetPosition (e.vertex, lastObject.transform.position);
+					}
 				}
 			}
 		}
@@ -209,7 +211,7 @@
 				}
 				// Fico mudando a posicao do node.
 				if (lastObject != null && Node.isNode (lastObject.tag)) {
-					//MoveEdges ();
+					MoveEdges ();
 					lastObject.transform.position = new Vector3 (hit.point.x,lastObject.transform.position.y,hit.point.z);
 				}
 				// Quando soltar o botao o node vai parar de se mover, e eu tiro a referencia do lastobject.

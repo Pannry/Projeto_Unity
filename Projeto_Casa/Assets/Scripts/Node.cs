@@ -7,14 +7,14 @@
 	public class Node : MonoBehaviour
 	{
 		private GameObject obj;
-		private LinkedList<GameObject> edges;
+		private LinkedList<Edge> edges;
 		private string label;
 		private string name;
 		public Node (GameObject obj, string label, string name)
 		{
 			this.obj = obj;
 			this.label = label;
-			edges = new LinkedList<GameObject> ();
+			edges = new LinkedList<Edge> ();
 			this.name = name;
 		}
 		public GameObject GetObject(){
@@ -29,10 +29,10 @@
 		public static bool isNode(string tag){
 			return (tag == Tags.EmbutidaLaje() || tag == Tags.QuadroEletrico());
 		}
-		public static void SearchNodeAndAddEdge(LinkedList<Node> nodes, GameObject node ,GameObject edge){
+		public static void SearchNodeAndAddEdge(LinkedList<Node> nodes, GameObject node ,GameObject edge, int v){
 			foreach (Node n in nodes) {
 				if (n.Compare (node)) {
-					n.AddEdge (edge);
+					n.AddEdge (edge, v);
 					break;
 				}
 			}
@@ -40,9 +40,7 @@
 		public static void SearchNodeAndDestroyEdge(LinkedList<Node> nodes,GameObject edge){
 			foreach (Node n in nodes) {
 				// Cria um dicionario.
-				if (n.GetEdges().Contains(edge)) {
-					n.RemoveEdge (edge);
-				}
+				n.RemoveEdge(edge);
 			}
 		}
 
@@ -52,8 +50,8 @@
 			for (int i = 0; i < nodes.Count; i++) {
 				if (n[i].Compare (node)) {
 					Debug.Log ("Node apagado =>" + n [i].name);
-					foreach (GameObject a in n[i].GetEdges()) {
-						Destroy(a);
+					foreach (Edge e in n[i].GetEdges()) {
+						Destroy (e.edge);
 					}
 					nodes = new LinkedList<Node> ();
 					for(int j = 0; j < n.Length; j++) {
@@ -65,15 +63,22 @@
 		}
 
 		public void RemoveEdge(GameObject edge){
-			edges.Remove (edge);
+			Edge[] e = new Edge[edges.Count];
+			edges.CopyTo (e, 0);
+			edges = new LinkedList<Edge> ();
+			for (int i = 0; i < e.Length; i++) {
+				if (!e [i].edge.Equals (edge))
+					edges.AddLast (e [i]);
+			}
+
 		}
 
-		public LinkedList<GameObject> GetEdges(){
+		public LinkedList<Edge> GetEdges(){
 			return edges;
 		}
 
-		public void AddEdge(GameObject edge){
-			edges.AddLast (edge);
+		public void AddEdge(GameObject edge, int v){
+			edges.AddLast (new Edge(edge,v));
 		}
 	}
 	}
