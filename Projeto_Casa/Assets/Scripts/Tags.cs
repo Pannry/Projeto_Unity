@@ -7,8 +7,8 @@ public static class Tags
 	public static string EmbutidaLaje(){
 		return "embutidaLaje";
 	}
-	public static string QuadroEletrico(){
-		return "quadroEletrico";
+	public static string NoBaixo(){
+		return "noBaixo";
 	}
 	public static string Parede(){
 		return "parede";

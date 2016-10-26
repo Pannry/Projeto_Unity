@@ -7,6 +7,7 @@ public class Edge : MonoBehaviour
 {
 	public int vertex;
 	public GameObject edge;
+	public float height;
 	public Edge (GameObject e, int v)
 	{
 		edge = e;

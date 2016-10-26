@@ -48,6 +48,7 @@
 				Rotate ();
 				CreateNode (1);
 				CreateNode (4);
+				CreateNode (5);
 				CreateWall ();
 				CreateLine ();
 				Move ();
@@ -92,6 +93,7 @@
 			// Se o raio estiver colidindo com a planta, cria um marcador.
 			if(Input.GetButtonDown("Fire1") && option == 2 && hit.transform.gameObject.tag == Tags.Planta() ){ 
 				lastObject = Instantiate(prefab[option -1],new Vector3(hit.point.x,0,hit.point.z), Quaternion.identity) as GameObject;
+				Debug.Log ("Objeto instanciado -- " + lastObject);
 				// Se o primeiro marcador nao estiver criado, o segundo tambem nao foi criado, logo nao ha marcas
 				// entao cria-se um marcador na primeira celula. Vai pro else no proximo marcador criado.
 				if (squares [0] == null)
@@ -153,7 +155,7 @@
 					lr.SetVertexCount(2);
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
 					lr.SetPosition(0,new Vector3(x,height,z));
-					Node.SearchNodeAndAddEdge (nodes,obj,lastObject,0);
+					Node.SearchNodeAndAddEdge (nodes,obj,lastObject,0,height);
 				}
 				// Arrasta o ultimo objeto criado.
 				if(lastObject != null){
@@ -171,19 +173,20 @@
 					Node.SearchNodeAndDestroyEdge (nodes, lastObject);
 					Destroy (lastObject);
 				}
-				Node.SearchNodeAndAddEdge (nodes,obj,lastObject,1);
+				Node.SearchNodeAndAddEdge (nodes,obj,lastObject,1,height);
 				LineRenderer lr = lastObject.GetComponent<LineRenderer>();
 				lr.SetPosition(1,new Vector3(x,height,z));
 				// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
-				if (tag == Tags.QuadroEletrico()) {
+				if (tag == Tags.NoBaixo()) {
 					//GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height - 0.1F,hit.point.z), Quaternion.identity) as GameObject;
 					//LineRenderer r = linhaVertical.GetComponent<LineRenderer>();
 					//r.SetWidth(0.05F,0.05F);
 					lr.SetVertexCount(3);
 					//r.SetPosition(0,new Vector3(x,height,z));
 					// A altura escolhida aqui eh exatamente a altura do quadro eletrico.
-					lr.SetPosition(2,new Vector3(x,1.5F,z));
-					//Node.SearchNodeAndAddEdge (nodes,obj,linhaVertical);
+					lr.SetPosition(2,new Vector3(x,obj.transform.position.y,z));
+					Node.SearchNodeAndAddEdge (nodes,obj,lastObject,2,obj.transform.position.y);
+
 				}
 			}
 		}
@@ -194,7 +197,8 @@
 				if (n.Compare (lastObject)) {
 					foreach (Edge e in n.GetEdges()) {
 						LineRenderer lr = e.edge.GetComponent<LineRenderer> ();
-						lr.SetPosition (e.vertex, lastObject.transform.position);
+						lr.SetPosition (e.vertex, new Vector3(lastObject.transform.position.x,
+							e.height,lastObject.transform.position.z));
 					}
 				}
 			}
@@ -250,6 +254,12 @@
 			option = 4;
 			height = 1.5F;
 
+		}
+
+		// Metodo para botao setar opcao. Tomada Baixa
+		public void SetNewTB(){
+			option = 5;
+			height = 0.30F;	
 		}
 	}
 	}
