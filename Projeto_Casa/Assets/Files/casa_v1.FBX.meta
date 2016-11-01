@@ -96,6 +96,7 @@ ModelImporter:
     2300008: Wall_LivingRoom1
     2300010: Wall_LivingRoom2
     2300012: Wall_LivingRoom3
+    2300014: Layer:WA_VISTA 04 8
     3300000: Layer:WA_VISTA 04 7
     3300002: Wall_Bathroom
     3300004: Wall_Fundo
@@ -103,6 +104,7 @@ ModelImporter:
     3300008: Wall_LivingRoom1
     3300010: Wall_LivingRoom2
     3300012: Wall_LivingRoom3
+    3300014: Layer:WA_VISTA 04 8
     4300000: Layer:WA_VISTA 04
     4300002: Wall_Bathroom
     4300004: Wall_Fundo

@@ -156,7 +156,7 @@
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
 					lr.SetPosition(0,new Vector3(x,height,z));
 					Node.SearchNodeAndAddEdge (nodes,obj,lastObject,0,height);
-				}
+				}//TODO Devo fazer os outros dois casos, ambos para nodes baixos, (nb-nb) ou (nb-el).
 				// Arrasta o ultimo objeto criado.
 				if(lastObject != null){
 					// Pego o renderizador de linha do ultimo objeto criado e mexo somente o ultimo vertice.
