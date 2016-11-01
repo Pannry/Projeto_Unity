@@ -16,7 +16,7 @@
 		// Como são utilizadas funcoes de drag, eu utilizo esse atributo que guarda o ultimo objeto que foi
 		// criado para ficar redesenhando.
 		private GameObject lastObject;
-		// Atributo que indica a opcao da ferramenta que esta sendo utilizada.
+		// Atributo que indicreca a opcao da ferramenta que esta sendo utilizada.
 		// Esse atributo tambem e utilizado para calcular a posicao do objeto no array prefab.
 		private int option = 0; // Coloque o elemento prefab de acordo com sua respectiva opcao - 1
 		// Aqui eh um array de 2 celulas. Esse array eh utilizado para guardar posicoes dos indicadores
@@ -150,7 +150,7 @@
 					lastObject = Instantiate(prefab[option -1],new Vector3(x,height,z), Quaternion.identity) as GameObject;
 					// Depois eu pego o renderizador da linha.
 					LineRenderer lr = lastObject.GetComponent<LineRenderer>();
-					lr.SetWidth(0.05F,0.05F);
+					lr.SetWidth(0.1F,0.1F);
 					// E digo que a linha sera formada por 2 vertices.
 					lr.SetVertexCount(2);
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
