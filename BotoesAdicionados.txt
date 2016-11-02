@@ -1,0 +1,11 @@
+NOME					   BOTAO		PREFAB
+PontoLuzParede				X			X		  (o que foi feito la no lab ontem)
+inter.UmaSeção				x
+inter.DuasSeções			x
+inter.TresSeções			x
+inter.ThreeWay				x
+PulsadorCampainha			x
+universal2P+T				x
+ChuveiroEletrico2P+T		x
+campainhaMusical			x
+Aterramento					x
