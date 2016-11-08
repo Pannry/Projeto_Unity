@@ -16,6 +16,8 @@
 		// Como são utilizadas funcoes de drag, eu utilizo esse atributo que guarda o ultimo objeto que foi
 		// criado para ficar redesenhando.
 		private GameObject lastObject;
+		// Utilizado para criacao de arestas.
+		private GameObject lastNode; 
 		// Atributo que indicreca a opcao da ferramenta que esta sendo utilizada.
 		// Esse atributo tambem e utilizado para calcular a posicao do objeto no array prefab.
 		private int option = 0; // Coloque o elemento prefab de acordo com sua respectiva opcao - 1
@@ -49,6 +51,11 @@
 				CreateNode (1);
 				CreateNode (4);
 				CreateNode (5);
+				CreateNode (6);
+				CreateNode (7);
+				CreateNode (8);
+				CreateNode (9);
+
 				CreateWall ();
 				CreateLine ();
 				Move ();
@@ -136,8 +143,9 @@
 			// linhas centralizados no node.
 			GameObject obj = hit.transform.gameObject;
 			string tag = hit.transform.gameObject.tag;
-			float x,z;
+			float x,z,currentHeight;
 			x = obj.transform.position.x;
+			currentHeight = obj.transform.position.y;
 			z = obj.transform.position.z;
 			//GetButton para drag, Se a tag do meu objeto for nao nula:
 			if(Input.GetButton("Fire1") && option == 3 && tag != Tags.SemTag()){ 
@@ -145,7 +153,10 @@
 				// Quando eu começar a precionar o mouse, tambem sera interpretado um click, e se eu estiver
 				// criando uma linha a partir de uma lampada a aresta sera aceita e podera ser arrastada
 				// atravez do proximo if.
-				if(Input.GetButtonDown("Fire1")&& tag == Tags.EmbutidaLaje()){
+				if(Input.GetButtonDown("Fire1")&& Node.isNode(tag)){
+					// Pegue a referência e a altura do primeiro objeto criado.
+					height = currentHeight;
+					lastNode = obj;
 					// Note que eh criado um objeto a partir de um prefab.
 					lastObject = Instantiate(prefab[option -1],new Vector3(x,height,z), Quaternion.identity) as GameObject;
 					// Depois eu pego o renderizador da linha.
@@ -176,16 +187,42 @@
 				Node.SearchNodeAndAddEdge (nodes,obj,lastObject,1,height);
 				LineRenderer lr = lastObject.GetComponent<LineRenderer>();
 				lr.SetPosition(1,new Vector3(x,height,z));
+				Debug.Log ("alt line =" + height);
+				Debug.Log ("alt obj =" + obj.transform.position.y);
 				// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
-				if (tag == Tags.NoBaixo()) {
-					//GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height - 0.1F,hit.point.z), Quaternion.identity) as GameObject;
-					//LineRenderer r = linhaVertical.GetComponent<LineRenderer>();
-					//r.SetWidth(0.05F,0.05F);
-					lr.SetVertexCount(3);
-					//r.SetPosition(0,new Vector3(x,height,z));
+				if (height >currentHeight) {
+					GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height - 0.1F,hit.point.z), Quaternion.identity) as GameObject;
+					LineRenderer r = linhaVertical.GetComponent<LineRenderer>();
+					r.SetWidth(0.1F,0.1F);
+					r.SetVertexCount (2);
+					r.SetPosition(0,new Vector3(x,height,z));
 					// A altura escolhida aqui eh exatamente a altura do quadro eletrico.
-					lr.SetPosition(2,new Vector3(x,obj.transform.position.y,z));
-					Node.SearchNodeAndAddEdge (nodes,obj,lastObject,2,obj.transform.position.y);
+					r.SetPosition (1, new Vector3 (x,currentHeight,z));
+					// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
+					Node.SearchNodeAndAddEdge (nodes, obj, lastObject, 1, height);
+					Node.SearchNodeAndAddEdge (nodes, obj, linhaVertical, 0, height);
+					Node.SearchNodeAndAddEdge (nodes, obj, linhaVertical, 1, currentHeight);
+					Node.SearchNodeAndAddEdge (nodes, lastNode, linhaVertical, 0, height);
+					lastNode = null;
+
+				} else if (height < currentHeight) {
+					GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height - 0.1F,hit.point.z), Quaternion.identity) as GameObject;
+					LineRenderer r = linhaVertical.GetComponent<LineRenderer>();
+					float lastX, lastZ;
+					lastX = lastNode.transform.position.x;
+					lastZ = lastNode.transform.position.z;
+					lr.SetPosition(0,new Vector3(lastX,currentHeight,lastZ));
+					lr.SetPosition(1,new Vector3(x,currentHeight,z));
+					r.SetWidth(0.1F,0.1F);
+					r.SetVertexCount (2);
+					r.SetPosition(0,new Vector3(lastX,height,lastZ));
+					// A altura escolhida aqui eh exatamente a altura do quadro eletrico.
+					r.SetPosition (1, new Vector3 (lastX, currentHeight, lastZ));
+					// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
+					Node.SearchNodeAndAddEdge (nodes, lastNode, lastObject, 0, height);
+					Node.SearchNodeAndAddEdge (nodes, lastNode, linhaVertical, 1, height);
+					Node.SearchNodeAndAddEdge (nodes, lastNode, linhaVertical, 0, currentHeight);
+					Node.SearchNodeAndAddEdge (nodes, obj, linhaVertical, 1, height);
 
 				}
 			}
@@ -227,7 +264,6 @@
 		// Metodo para botao setar opcao.
 		public void SetNewLine(){
 			option = 3;
-			height = 2.8F;
 		}
 		// Metodo para botao setar opcao.
 		public void SetNewEL(){
@@ -260,6 +296,26 @@
 		public void SetNewTB(){
 			option = 5;
 			height = 0.30F;	
+		}
+		//Tomada baixa universal.
+		public void SetNewTBU(){
+			option = 6;
+			height = 1.2F;
+		}
+		//Ponto Luz Parede.
+		public void SetNewPLP(){
+			option = 7;
+			height = 2F;
+		}
+		//Tomada para chuveiro eletrico.
+		public void SetNewCE(){
+			option = 8;
+			height = 2.2F;
+		}
+		//Interruptor 1 sessão
+		public void SetNewIUS(){
+			option = 9;
+			height = 1.2F;			
 		}
 	}
 	}
