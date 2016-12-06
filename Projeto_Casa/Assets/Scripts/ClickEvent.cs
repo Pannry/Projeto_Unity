@@ -18,6 +18,7 @@
 		private GameObject lastObject;
 		// Utilizado para criacao de arestas.
 		private GameObject lastNode; 
+		private Edge tempEdge;
 		// Atributo que indicreca a opcao da ferramenta que esta sendo utilizada.
 		// Esse atributo tambem e utilizado para calcular a posicao do objeto no array prefab.
 		private int option = 0; // Coloque o elemento prefab de acordo com sua respectiva opcao - 1
@@ -166,7 +167,7 @@
 					lr.SetVertexCount(2);
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
 					lr.SetPosition(0,new Vector3(x,height,z));
-					Node.SearchNodeAndAddEdge (nodes,obj,lastObject,0,height);
+					tempEdge = new Edge (lastObject, obj, null);
 				}//TODO Devo fazer os outros dois casos, ambos para nodes baixos, (nb-nb) ou (nb-el).
 				// Arrasta o ultimo objeto criado.
 				if(lastObject != null){
@@ -183,30 +184,34 @@
 				if (!Node.isNode(tag)) {
 					Node.SearchNodeAndDestroyEdge (nodes, lastObject);
 					Destroy (lastObject);
+					tempEdge = null;
 				}
-				Node.SearchNodeAndAddEdge (nodes,obj,lastObject,1,height);
+				tempEdge = new Edge (tempEdge.edge, tempEdge.inv, obj);
+				Node.SearchNodeAndAddEdge (nodes,lastNode,tempEdge,height);
+				Node.SearchNodeAndAddEdge (nodes,obj,tempEdge,height);
 				LineRenderer lr = lastObject.GetComponent<LineRenderer>();
 				lr.SetPosition(1,new Vector3(x,height,z));
 				Debug.Log ("alt line =" + height);
 				Debug.Log ("alt obj =" + obj.transform.position.y);
 				// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
 				if (height >currentHeight) {
-					GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height - 0.1F,hit.point.z), Quaternion.identity) as GameObject;
+					GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
 					LineRenderer r = linhaVertical.GetComponent<LineRenderer>();
 					r.SetWidth(0.1F,0.1F);
 					r.SetVertexCount (2);
 					r.SetPosition(0,new Vector3(x,height,z));
-					// A altura escolhida aqui eh exatamente a altura do quadro eletrico.
+					// A altura escolhida aqui eh exatamente a altura do no baixo.
 					r.SetPosition (1, new Vector3 (x,currentHeight,z));
 					// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
-					Node.SearchNodeAndAddEdge (nodes, obj, lastObject, 1, height);
-					Node.SearchNodeAndAddEdge (nodes, obj, linhaVertical, 0, height);
-					Node.SearchNodeAndAddEdge (nodes, obj, linhaVertical, 1, currentHeight);
-					Node.SearchNodeAndAddEdge (nodes, lastNode, linhaVertical, 0, height);
+					tempEdge = new Edge(linhaVertical,lastNode,obj);
+					tempEdge.isVertical = true;
+					Node.SearchNodeAndAddEdge (nodes,lastNode,tempEdge,currentHeight);
+					Node.SearchNodeAndAddEdge (nodes,obj,tempEdge,currentHeight);
 					lastNode = null;
+					tempEdge = null;
 
 				} else if (height < currentHeight) {
-					GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height - 0.1F,hit.point.z), Quaternion.identity) as GameObject;
+					GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
 					LineRenderer r = linhaVertical.GetComponent<LineRenderer>();
 					float lastX, lastZ;
 					lastX = lastNode.transform.position.x;
@@ -219,11 +224,12 @@
 					// A altura escolhida aqui eh exatamente a altura do quadro eletrico.
 					r.SetPosition (1, new Vector3 (lastX, currentHeight, lastZ));
 					// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
-					Node.SearchNodeAndAddEdge (nodes, lastNode, lastObject, 0, height);
-					Node.SearchNodeAndAddEdge (nodes, lastNode, linhaVertical, 1, height);
-					Node.SearchNodeAndAddEdge (nodes, lastNode, linhaVertical, 0, currentHeight);
-					Node.SearchNodeAndAddEdge (nodes, obj, linhaVertical, 1, height);
-
+					tempEdge = new Edge(linhaVertical,lastNode,obj); 
+					tempEdge.isVertical = true;
+					Node.SearchNodeAndAddEdge (nodes,lastNode,tempEdge,height); //sempre a altura mais baixa eh salva
+					Node.SearchNodeAndAddEdge (nodes,obj,tempEdge,height);
+					lastNode = null;
+					tempEdge = null;
 				}
 			}
 		}
@@ -231,11 +237,32 @@
 		private void MoveEdges(){
 			Node aux;
 			foreach (Node n in nodes) {
+				int count = 0;
 				if (n.Compare (lastObject)) {
 					foreach (Edge e in n.GetEdges()) {
 						LineRenderer lr = e.edge.GetComponent<LineRenderer> ();
-						lr.SetPosition (e.vertex, new Vector3(lastObject.transform.position.x,
-							e.height,lastObject.transform.position.z));
+						//Se Reta horizontal...
+						if (!e.isVertical) {
+							if (lastObject.Equals (e.inv)) {
+								lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
+									lastObject.transform.position.z));
+							} else if (lastObject.Equals (e.outv)) {
+								lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
+									lastObject.transform.position.z));
+							}
+						} else {
+							//So move aresta vertical se estiver fazendo o mov apartir do node inferior.
+							if (lastObject.transform.position.y == e.height) {
+								Debug.Log ("Falta Mover Parte inferior...");
+								lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
+									lastObject.transform.position.z));
+								lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
+									lastObject.transform.position.z));
+							
+							}
+							
+						}
+							
 					}
 				}
 			}

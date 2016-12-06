@@ -29,10 +29,10 @@
 		public static bool isNode(string tag){
 			return (tag == Tags.EmbutidaLaje() || tag == Tags.NoBaixo());
 		}
-		public static void SearchNodeAndAddEdge(LinkedList<Node> nodes, GameObject node ,GameObject edge, int v, float h){
+		public static void SearchNodeAndAddEdge(LinkedList<Node> nodes, GameObject node ,Edge edge, float h){
 			foreach (Node n in nodes) {
 				if (n.Compare (node)) {
-					n.AddEdge (edge, v, h);
+					n.AddEdge (edge, h);
 					break;
 				}
 			}
@@ -77,8 +77,8 @@
 			return edges;
 		}
 
-		public void AddEdge(GameObject edge, int v, float h){
-			edges.AddLast (new Edge(edge,v));
+		public void AddEdge(Edge e, float h){
+			edges.AddLast (e);
 			edges.Last.Value.height = h;
 		}
 	}

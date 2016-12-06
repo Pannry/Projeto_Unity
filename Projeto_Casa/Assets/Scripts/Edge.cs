@@ -2,17 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+namespace AssemblyCSharp
+{
 public class Edge : MonoBehaviour
 {
-	public int vertex;
+	public GameObject inv,outv;
 	public GameObject edge;
 	public float height;
-	public Edge (GameObject e, int v)
+	public bool isVertical = false;
+
+	public Edge (GameObject e, GameObject v1, GameObject v2)
 	{
 		edge = e;
-		vertex = v;
+		inv = v1;
+		outv = v2;
 	}
+}
 }
 
 
