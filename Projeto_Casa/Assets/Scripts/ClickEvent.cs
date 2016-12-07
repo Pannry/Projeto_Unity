@@ -1,4 +1,5 @@
 	using UnityEngine;
+	using UnityEditor;
 	using System.Collections;
 	using System.Collections.Generic;
 
@@ -49,14 +50,9 @@
 					lastObject = null;
 				// Chamada de opcoes.
 				Rotate ();
-				CreateNode (1);
-				CreateNode (4);
-				CreateNode (5);
-				CreateNode (6);
-				CreateNode (7);
-				CreateNode (8);
-				CreateNode (9);
-
+				for (int i = 1; i <= prefab.Length; i++)
+					CreateNode (i);
+				SetRatio ();
 				CreateWall ();
 				CreateLine ();
 				Move ();
@@ -70,6 +66,20 @@
 					Destroy (hit.transform.gameObject);
 				}
 			}	
+		}
+		//Definir a proporção da planta.
+		public void SetRatio(){
+			string tag = hit.transform.gameObject.tag;
+			float x,z;
+			x = hit.point.x;
+			z = hit.point.z;
+			if (Input.GetButton("Fire2")) {
+				if (Input.GetButtonDown ("Fire2")) {
+					
+				}
+				/*string[] vec = { tag };
+				new RatioPopup(vec);*/
+			}
 		}
 
 		// Funcao para rotacionar o objeto em 90 graos.
@@ -168,7 +178,7 @@
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
 					lr.SetPosition(0,new Vector3(x,height,z));
 					tempEdge = new Edge (lastObject, obj, null);
-				}//TODO Devo fazer os outros dois casos, ambos para nodes baixos, (nb-nb) ou (nb-el).
+				}
 				// Arrasta o ultimo objeto criado.
 				if(lastObject != null){
 					// Pego o renderizador de linha do ultimo objeto criado e mexo somente o ultimo vertice.
@@ -343,6 +353,35 @@
 		public void SetNewIUS(){
 			option = 9;
 			height = 1.2F;			
+		}
+		//Interruptor 3 sessões
+		public void SetNewITS(){
+			option = 10;
+			height = 1.2F;			
+		}
+		//Interruptor 2 sessões
+		public void SetNewIDS(){
+			option = 11;
+			height = 1.2F;			
+		}
+		//Interruptor three way
+		public void SetNewITW(){
+			option = 12;
+			height = 1.2F;			
+		}
+		//Haste Aterramento de Cobre
+		public void SetNewHAC(){
+			//TODO A Haste nao vai funcionar exatamente como um node comum.
+		}
+		//Pulsador Campainha
+		public void SetNewPC(){
+			option = 13;
+			height = 1.2F;	
+		}
+		//Campainha Musical
+		public void SetNewCM(){
+			option = 14;
+			height = 2.5F;	
 		}
 	}
 	}

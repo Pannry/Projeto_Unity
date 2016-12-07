@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour {
 
-	private float speed = 2.0f;
+	public float speed = 2.0f;
 	private float zoomSpeed = 2.0f;
 
 	public float minX = -360.0f;
