@@ -5,7 +5,7 @@
 
 	namespace AssemblyCSharp{
 	public class ClickEvent : MonoBehaviour {
-
+		private float xratio, yratio;
 		// Raio utilizado para colidir e selecionar um objeto.
 		Ray ray;
 		// Guarda a colisao do raio.
@@ -27,6 +27,7 @@
 		// da parede, e criar uma nova parede.
 		private GameObject[] squares;
 		// Aqui eh uma lista de nos, futuramente vai ser um grafo.
+		private LinkedList<Edge> edges;
 		private LinkedList<Node> nodes;
 		private int totalNodes = 0;
 		// Construtor, seta o square como um array de 2 celulas e inicializa a lista de nos.
@@ -35,6 +36,7 @@
 			squares [0] = null;
 			squares [1] = null;
 			nodes = new LinkedList<Node> ();
+			edges = new LinkedList<Edge> ();
 			//nodes = GetComponentInParent<GameObject> ().AddComponent <LinkedList<Node>>() as LinkedList<Node>; 
 		}
 
@@ -52,9 +54,10 @@
 				Rotate ();
 				for (int i = 1; i <= prefab.Length; i++)
 					CreateNode (i);
-				SetRatio ();
+				SetConfigRatio ();
 				CreateWall ();
 				CreateLine ();
+				Info ();
 				Move ();
 				// Se a opcao de delecao estiver ativa, deleta-se o elemento que o raio colidir.
 				// Note que o elemento sera deletado desde que ele tenha uma tag(Ou seja, nao seja o menu)
@@ -68,17 +71,60 @@
 			}	
 		}
 		//Definir a proporção da planta.
-		public void SetRatio(){
+		public void SetConfigRatio(){
 			string tag = hit.transform.gameObject.tag;
 			float x,z;
 			x = hit.point.x;
 			z = hit.point.z;
-			if (Input.GetButton("Fire2")) {
-				if (Input.GetButtonDown ("Fire2")) {
-					
+			if (Input.GetKey(KeyCode.S)) {
+				SetNewLine ();
+				height = 1.5F;
+				if (Input.GetKeyDown (KeyCode.S)) {
+					lastObject = Instantiate(prefab[option -1],new Vector3(x,height,z), Quaternion.identity) as GameObject;
+					LineRenderer lr = lastObject.GetComponent<LineRenderer>();
+					lr.startColor = new Vector4 (1F, 1F, 0F, 0F);
+					lr.SetWidth(0.01F,0.01F);
+					lr.SetVertexCount(5);
+					lr.SetPosition(0,new Vector3(x,height,z));
 				}
-				/*string[] vec = { tag };
-				new RatioPopup(vec);*/
+				if (lastObject != null) {
+					LineRenderer lr = lastObject.GetComponent<LineRenderer>();
+					lr.SetPosition(1,new Vector3(hit.point.x,height,lr.GetPosition(0).z));
+					lr.SetPosition(2,new Vector3(hit.point.x,height,hit.point.z));
+					lr.SetPosition(3,new Vector3(lr.GetPosition(0).x,height,hit.point.z));
+					lr.SetPosition(4,new Vector3(lr.GetPosition(0).x,height,lr.GetPosition(0).z));
+				}
+			
+			}
+			if (Input.GetKeyUp (KeyCode.S)) {
+				string[] vec = { tag };
+				new RatioPopup (vec, this, lastObject);
+				lastObject = null;
+			}
+		}
+
+		public void SetRatios(float rx, float ry){
+			xratio = rx;
+			yratio = ry;
+		}
+
+		public float[] GetRatios(){
+			return new float[] {xratio,yratio};
+		}
+
+		public void Info(){
+			string tag = hit.transform.gameObject.tag;
+			float x,z;
+			x = hit.point.x;
+			z = hit.point.z;
+			if (Input.GetKeyDown (KeyCode.Mouse1)) {
+				foreach (Edge e in edges) {
+					if(e.edge.GetComponent<BoxCollider>() == null)
+						e.edge.AddComponent<BoxCollider> ();
+				}
+			}
+			if (Input.GetKey (KeyCode.Mouse1) && tag == "line") {
+				new InfoPopup (edges);
 			}
 		}
 
@@ -154,92 +200,98 @@
 			// linhas centralizados no node.
 			GameObject obj = hit.transform.gameObject;
 			string tag = hit.transform.gameObject.tag;
-			float x,z,currentHeight;
+			float x, z, currentHeight;
 			x = obj.transform.position.x;
 			currentHeight = obj.transform.position.y;
 			z = obj.transform.position.z;
 			//GetButton para drag, Se a tag do meu objeto for nao nula:
-			if(Input.GetButton("Fire1") && option == 3 && tag != Tags.SemTag()){ 
+			if (Input.GetButton ("Fire1") && option == 3 && tag != Tags.SemTag ()) { 
 				// Para ser click and click, troque esse evento por true. Desse jeito é click and drag[ACIMA].
 				// Quando eu começar a precionar o mouse, tambem sera interpretado um click, e se eu estiver
 				// criando uma linha a partir de uma lampada a aresta sera aceita e podera ser arrastada
 				// atravez do proximo if.
-				if(Input.GetButtonDown("Fire1")&& Node.isNode(tag)){
+				if (Input.GetButtonDown ("Fire1") && Node.isNode (tag)) {
 					// Pegue a referência e a altura do primeiro objeto criado.
 					height = currentHeight;
 					lastNode = obj;
 					// Note que eh criado um objeto a partir de um prefab.
-					lastObject = Instantiate(prefab[option -1],new Vector3(x,height,z), Quaternion.identity) as GameObject;
+					lastObject = Instantiate (prefab [option - 1], new Vector3 (x, height, z), Quaternion.identity) as GameObject;
 					// Depois eu pego o renderizador da linha.
-					LineRenderer lr = lastObject.GetComponent<LineRenderer>();
-					lr.SetWidth(0.1F,0.1F);
+					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
+					lr.SetWidth (0.1F, 0.1F);
 					// E digo que a linha sera formada por 2 vertices.
-					lr.SetVertexCount(2);
+					lr.SetVertexCount (2);
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
-					lr.SetPosition(0,new Vector3(x,height,z));
+					lr.SetPosition (0, new Vector3 (x, height, z));
 					tempEdge = new Edge (lastObject, obj, null);
 				}
 				// Arrasta o ultimo objeto criado.
-				if(lastObject != null){
+				if (lastObject != null) {
 					// Pego o renderizador de linha do ultimo objeto criado e mexo somente o ultimo vertice.
 					// Isso da todo o efeito de drag.
-					LineRenderer lr = lastObject.GetComponent<LineRenderer>();
-					lr.SetPosition(1,new Vector3(hit.point.x,height,hit.point.z));
+					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
+					lr.SetPosition (1, new Vector3 (hit.point.x, height, hit.point.z));
 
 				}
 			}
-			if(Input.GetButtonUp("Fire1") && lastObject != null && option == 3){
+			if (Input.GetButtonUp ("Fire1") && lastObject != null && option == 3) {
 				// Se a tag não for de nenhum nó, destrua...
 				// Se a linha for solta em algum objeto que nao seja no, sera destruida.
-				if (!Node.isNode(tag)) {
+				if (!Node.isNode (tag)) {
 					Node.SearchNodeAndDestroyEdge (nodes, lastObject);
 					Destroy (lastObject);
 					tempEdge = null;
-				}
-				tempEdge = new Edge (tempEdge.edge, tempEdge.inv, obj);
-				Node.SearchNodeAndAddEdge (nodes,lastNode,tempEdge,height);
-				Node.SearchNodeAndAddEdge (nodes,obj,tempEdge,height);
-				LineRenderer lr = lastObject.GetComponent<LineRenderer>();
-				lr.SetPosition(1,new Vector3(x,height,z));
-				Debug.Log ("alt line =" + height);
-				Debug.Log ("alt obj =" + obj.transform.position.y);
-				// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
-				if (height >currentHeight) {
-					GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
-					LineRenderer r = linhaVertical.GetComponent<LineRenderer>();
-					r.SetWidth(0.1F,0.1F);
-					r.SetVertexCount (2);
-					r.SetPosition(0,new Vector3(x,height,z));
-					// A altura escolhida aqui eh exatamente a altura do no baixo.
-					r.SetPosition (1, new Vector3 (x,currentHeight,z));
-					// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
-					tempEdge = new Edge(linhaVertical,lastNode,obj);
-					tempEdge.isVertical = true;
-					Node.SearchNodeAndAddEdge (nodes,lastNode,tempEdge,currentHeight);
-					Node.SearchNodeAndAddEdge (nodes,obj,tempEdge,currentHeight);
-					lastNode = null;
-					tempEdge = null;
+				} else {
+					tempEdge = new Edge (tempEdge.edge, tempEdge.inv, obj);
+					edges.AddLast (tempEdge);
+					Node.SearchNodeAndAddEdge (nodes, lastNode, tempEdge, height);
+					Node.SearchNodeAndAddEdge (nodes, obj, tempEdge, height);
+					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
+					lr.SetPosition (1, new Vector3 (x, height, z));
+					Debug.Log ("alt line =" + height);
+					Debug.Log ("alt obj =" + obj.transform.position.y);
+					// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
+					if (height > currentHeight) {
+						GameObject linhaVertical = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
+						LineRenderer r = linhaVertical.GetComponent<LineRenderer> ();
+						r.SetWidth (0.1F, 0.1F);
+						r.SetVertexCount (2);
+						r.SetPosition (0, new Vector3 (x, height, z));
+						// A altura escolhida aqui eh exatamente a altura do no baixo.
+						r.SetPosition (1, new Vector3 (x, currentHeight, z));
+						// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
+						tempEdge = new Edge (linhaVertical, lastNode, obj);
+						tempEdge.isVertical = true;
+						edges.AddLast (tempEdge);
+						Node.SearchNodeAndAddEdge (nodes, lastNode, tempEdge, currentHeight);
+						Node.SearchNodeAndAddEdge (nodes, obj, tempEdge, currentHeight);
+						lastNode = null;
+						tempEdge = null;
+						lastObject = null;
 
-				} else if (height < currentHeight) {
-					GameObject linhaVertical = Instantiate(prefab[option -1],new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
-					LineRenderer r = linhaVertical.GetComponent<LineRenderer>();
-					float lastX, lastZ;
-					lastX = lastNode.transform.position.x;
-					lastZ = lastNode.transform.position.z;
-					lr.SetPosition(0,new Vector3(lastX,currentHeight,lastZ));
-					lr.SetPosition(1,new Vector3(x,currentHeight,z));
-					r.SetWidth(0.1F,0.1F);
-					r.SetVertexCount (2);
-					r.SetPosition(0,new Vector3(lastX,height,lastZ));
-					// A altura escolhida aqui eh exatamente a altura do quadro eletrico.
-					r.SetPosition (1, new Vector3 (lastX, currentHeight, lastZ));
-					// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
-					tempEdge = new Edge(linhaVertical,lastNode,obj); 
-					tempEdge.isVertical = true;
-					Node.SearchNodeAndAddEdge (nodes,lastNode,tempEdge,height); //sempre a altura mais baixa eh salva
-					Node.SearchNodeAndAddEdge (nodes,obj,tempEdge,height);
-					lastNode = null;
-					tempEdge = null;
+					} else if (height < currentHeight) {
+						GameObject linhaVertical = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
+						LineRenderer r = linhaVertical.GetComponent<LineRenderer> ();
+						float lastX, lastZ;
+						lastX = lastNode.transform.position.x;
+						lastZ = lastNode.transform.position.z;
+						lr.SetPosition (0, new Vector3 (lastX, currentHeight, lastZ));
+						lr.SetPosition (1, new Vector3 (x, currentHeight, z));
+						r.SetWidth (0.1F, 0.1F);
+						r.SetVertexCount (2);
+						r.SetPosition (0, new Vector3 (lastX, height, lastZ));
+						// A altura escolhida aqui eh exatamente a altura do quadro eletrico.
+						r.SetPosition (1, new Vector3 (lastX, currentHeight, lastZ));
+						// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
+						tempEdge = new Edge (linhaVertical, lastNode, obj); 
+						tempEdge.isVertical = true;
+						edges.AddLast (tempEdge);
+						Node.SearchNodeAndAddEdge (nodes, lastNode, tempEdge, height); //sempre a altura mais baixa eh salva
+						Node.SearchNodeAndAddEdge (nodes, obj, tempEdge, height);
+						lastNode = null;
+						tempEdge = null;
+						lastObject = null;
+					}
 				}
 			}
 		}

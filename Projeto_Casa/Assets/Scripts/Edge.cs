@@ -16,6 +16,7 @@ public class Edge : MonoBehaviour
 		edge = e;
 		inv = v1;
 		outv = v2;
+		
 	}
 }
 }
