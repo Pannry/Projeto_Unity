@@ -51,11 +51,10 @@
      <Compile Include="Assets\Scripts\ClickEvent.cs" />
      <Compile Include="Assets\Scripts\Edge.cs" />
      <Compile Include="Assets\Scripts\InfoPopup.cs" />
+     <Compile Include="Assets\Scripts\MostrarParedes.cs" />
      <Compile Include="Assets\Scripts\Node.cs" />
      <Compile Include="Assets\Scripts\RatioPopup.cs" />
      <Compile Include="Assets\Scripts\Tags.cs" />
-     <Compile Include="Assets\Scripts\Teste.cs" />
-     <Compile Include="Assets\Scripts\mostrarParedes.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

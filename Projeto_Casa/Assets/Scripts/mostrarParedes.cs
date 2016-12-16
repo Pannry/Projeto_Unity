@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class mostrarParedes : MonoBehaviour {
+public class MostrarParedes : MonoBehaviour {
 
 	private bool opt;
 

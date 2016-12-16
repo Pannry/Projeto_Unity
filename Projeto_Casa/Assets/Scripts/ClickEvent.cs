@@ -5,7 +5,7 @@
 
 	namespace AssemblyCSharp{
 	public class ClickEvent : MonoBehaviour {
-		private float xratio, yratio;
+		private float xratio, zratio;
 		// Raio utilizado para colidir e selecionar um objeto.
 		Ray ray;
 		// Guarda a colisao do raio.
@@ -59,6 +59,7 @@
 				CreateLine ();
 				Info ();
 				Move ();
+				GetTubulationSize ();
 				// Se a opcao de delecao estiver ativa, deleta-se o elemento que o raio colidir.
 				// Note que o elemento sera deletado desde que ele tenha uma tag(Ou seja, nao seja o menu)
 				// diferente de Untagged e planta.
@@ -105,11 +106,11 @@
 
 		public void SetRatios(float rx, float ry){
 			xratio = rx;
-			yratio = ry;
+			zratio = ry;
 		}
 
 		public float[] GetRatios(){
-			return new float[] {xratio,yratio};
+			return new float[] {xratio,zratio};
 		}
 
 		public void Info(){
@@ -124,7 +125,7 @@
 				}
 			}
 			if (Input.GetKey (KeyCode.Mouse1) && tag == "line") {
-				new InfoPopup (edges);
+				new InfoPopup (edges,hit.transform.gameObject);
 			}
 		}
 
@@ -147,7 +148,8 @@
 			if(Input.GetButtonDown("Fire1") && option == index && tag == Tags.Planta() ){
 				GameObject obj=Instantiate(prefab[option - 1],new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
 				obj.transform.Rotate(new Vector3(90F,0F,0F));
-				nodes.AddLast (new Node (obj, obj.tag,totalNodes.ToString()));
+				Debug.Log (obj.name);
+				nodes.AddLast (new Node (obj, obj.tag,obj.name));
 				totalNodes++;
 			}
 		}
@@ -248,8 +250,6 @@
 					Node.SearchNodeAndAddEdge (nodes, obj, tempEdge, height);
 					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
 					lr.SetPosition (1, new Vector3 (x, height, z));
-					Debug.Log ("alt line =" + height);
-					Debug.Log ("alt obj =" + obj.transform.position.y);
 					// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
 					if (height > currentHeight) {
 						GameObject linhaVertical = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
@@ -348,6 +348,21 @@
 				if (Input.GetButtonUp ("Fire1"))
 					lastObject = null;
 			}
+		}
+		public void GetTubulationSize(){
+			float result = 0;
+			float resultrw = 0;
+			foreach (Edge e in edges) {
+				LineRenderer lr = e.edge.GetComponent<LineRenderer> ();
+				Vector3 reworkedA = new Vector3(lr.GetPosition (0).x * (1/xratio),
+					lr.GetPosition (0).y,lr.GetPosition (0).z * (1/zratio));
+				Vector3 reworkedB = new Vector3(lr.GetPosition (1).x * (1/xratio),
+					lr.GetPosition (1).y,lr.GetPosition (1).z * (1/zratio));
+				result += Vector3.Distance (lr.GetPosition (0), lr.GetPosition (1));
+				resultrw+= Vector3.Distance (reworkedA, reworkedB);
+			}
+			Debug.Log ("Distancia total = " + result);
+			Debug.Log ("Distancia total retrabalhada = " + resultrw);
 		}
 
 		// Metodo para botao setar opcao.
