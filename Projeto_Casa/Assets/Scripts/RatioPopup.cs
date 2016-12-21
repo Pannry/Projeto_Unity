@@ -1,11 +1,15 @@
-﻿using System;
+﻿
+using System;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using System.Collections;
 
 
 namespace AssemblyCSharp
 {
+	#if UNITY_EDITOR
 	public class RatioPopup: EditorWindow
 	{
 		public bool save = false;
@@ -49,5 +53,6 @@ namespace AssemblyCSharp
 		}
 	
 	}
+	#endif
 }
 

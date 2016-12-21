@@ -1,5 +1,8 @@
+
 	using UnityEngine;
+#if UNITY_EDITOR
 	using UnityEditor;
+#endif
 	using System.Collections;
 	using System.Collections.Generic;
 
@@ -99,7 +102,9 @@
 			}
 			if (Input.GetKeyUp (KeyCode.S)) {
 				string[] vec = { tag };
+				#if UNITY_EDITOR
 				new RatioPopup (vec, this, lastObject);
+				#endif
 				lastObject = null;
 			}
 		}
@@ -125,7 +130,9 @@
 				}
 			}
 			if (Input.GetKey (KeyCode.Mouse1) && tag == "line") {
+				#if UNITY_EDITOR
 				new InfoPopup (edges,hit.transform.gameObject);
+				#endif
 			}
 		}
 
