@@ -125,13 +125,15 @@
 			z = hit.point.z;
 			if (Input.GetKeyDown (KeyCode.Mouse1)) {
 				foreach (Edge e in edges) {
-					if(e.edge.GetComponent<BoxCollider>() == null)
+					if (e.edge.GetComponent<BoxCollider> () == null) {
 						e.edge.AddComponent<BoxCollider> ();
+					}
+					e.edge.GetComponent<BoxCollider> ().size = new Vector3 (1, 0, 1);
 				}
 			}
 			if (Input.GetKey (KeyCode.Mouse1) && tag == "line") {
 				#if UNITY_EDITOR
-				new InfoPopup (edges,hit.transform.gameObject);
+				new InfoPopup (edges,hit.transform.gameObject,this);
 				#endif
 			}
 		}
