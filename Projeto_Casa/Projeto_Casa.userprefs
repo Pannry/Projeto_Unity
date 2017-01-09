@@ -1,9 +1,9 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\InfoPopup.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PopupRatio.cs">
     <Files>
-      <File FileName="Assets\Scripts\ClickEvent.cs" Line="131" Column="15" />
-      <File FileName="Assets\Scripts\InfoPopup.cs" Line="11" Column="2" />
+      <File FileName="Assets\Scripts\ClickEvent.cs" Line="104" Column="39" />
+      <File FileName="Assets\Scripts\PopupRatio.cs" Line="26" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

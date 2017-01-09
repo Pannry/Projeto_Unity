@@ -53,7 +53,7 @@
      <Compile Include="Assets\Scripts\InfoPopup.cs" />
      <Compile Include="Assets\Scripts\MostrarParedes.cs" />
      <Compile Include="Assets\Scripts\Node.cs" />
-     <Compile Include="Assets\Scripts\RatioPopup.cs" />
+     <Compile Include="Assets\Scripts\PopupRatio.cs" />
      <Compile Include="Assets\Scripts\Tags.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

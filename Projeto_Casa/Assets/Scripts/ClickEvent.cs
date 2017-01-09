@@ -1,13 +1,11 @@
-
 	using UnityEngine;
-#if UNITY_EDITOR
-	using UnityEditor;
-#endif
 	using System.Collections;
 	using System.Collections.Generic;
 
 	namespace AssemblyCSharp{
 	public class ClickEvent : MonoBehaviour {
+		public bool popupOpen;
+		public GameObject popup;
 		private float xratio, zratio;
 		// Raio utilizado para colidir e selecionar um objeto.
 		Ray ray;
@@ -40,6 +38,7 @@
 			squares [1] = null;
 			nodes = new LinkedList<Node> ();
 			edges = new LinkedList<Edge> ();
+			popupOpen = false;
 			//nodes = GetComponentInParent<GameObject> ().AddComponent <LinkedList<Node>>() as LinkedList<Node>; 
 		}
 
@@ -80,7 +79,7 @@
 			float x,z;
 			x = hit.point.x;
 			z = hit.point.z;
-			if (Input.GetKey(KeyCode.S)) {
+			if (Input.GetKey(KeyCode.S) && !popupOpen) {
 				SetNewLine ();
 				height = 1.5F;
 				if (Input.GetKeyDown (KeyCode.S)) {
@@ -100,12 +99,13 @@
 				}
 			
 			}
-			if (Input.GetKeyUp (KeyCode.S)) {
+			if (Input.GetKeyUp (KeyCode.S)&& !popupOpen) {
 				string[] vec = { tag };
-				#if UNITY_EDITOR
-				new RatioPopup (vec, this, lastObject);
-				#endif
+				//new RatioPopup (vec, this, lastObject);
+				PopupRatio.CreateRatioBox (popup,this,lastObject);
 				lastObject = null;
+				popupOpen = true;
+				option = -1;
 			}
 		}
 
@@ -132,12 +132,14 @@
 				}
 			}
 			if (Input.GetKey (KeyCode.Mouse1) && tag == "line") {
-				#if UNITY_EDITOR
-				new InfoPopup (edges,hit.transform.gameObject,this);
-				#endif
+				//#if UNITY_EDITOR
+				new  InfoPopup (edges,hit.transform.gameObject,this);
+				//Resources.FindObjectsOfTypeAll(typeof(InfoPopup));
+				//Resources.FindObjectsOfTypeAll<> ();
+				//#endif
 			}
 		}
-
+			
 		// Funcao para rotacionar o objeto em 90 graos.
 		public void Rotate(){
 			string tag = hit.transform.gameObject.tag;
@@ -240,9 +242,9 @@
 				if (lastObject != null) {
 					// Pego o renderizador de linha do ultimo objeto criado e mexo somente o ultimo vertice.
 					// Isso da todo o efeito de drag.
+					Debug.Log ("Teste 6");
 					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
 					lr.SetPosition (1, new Vector3 (hit.point.x, height, hit.point.z));
-
 				}
 			}
 			if (Input.GetButtonUp ("Fire1") && lastObject != null && option == 3) {
@@ -251,6 +253,7 @@
 				if (!Node.isNode (tag)) {
 					Node.SearchNodeAndDestroyEdge (nodes, lastObject);
 					Destroy (lastObject);
+					lastNode = null;
 					tempEdge = null;
 				} else {
 					tempEdge = new Edge (tempEdge.edge, tempEdge.inv, obj);
@@ -370,8 +373,8 @@
 				result += Vector3.Distance (lr.GetPosition (0), lr.GetPosition (1));
 				resultrw+= Vector3.Distance (reworkedA, reworkedB);
 			}
-			Debug.Log ("Distancia total = " + result);
-			Debug.Log ("Distancia total retrabalhada = " + resultrw);
+			//Debug.Log ("Distancia total = " + result);
+			//Debug.Log ("Distancia total retrabalhada = " + resultrw);
 		}
 
 		// Metodo para botao setar opcao.

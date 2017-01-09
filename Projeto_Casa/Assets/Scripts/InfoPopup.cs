@@ -6,12 +6,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-
-namespace AssemblyCSharp
-{
-	public class InfoPopup:EditorWindow
+namespace AssemblyCSharp {
+public class InfoPopup:EditorWindow
 	{
-		public ClickEvent myEvent;
+		
+		public AssemblyCSharp.ClickEvent myEvent;
 		public LinkedList<AssemblyCSharp.Edge> edges;
 		public GameObject myEdge;
 		[MenuItem("Window/My Window")]
@@ -53,6 +52,6 @@ namespace AssemblyCSharp
 			edges = _edges;
 			Init ();
 		}
-	}
+}
 }
 #endif
