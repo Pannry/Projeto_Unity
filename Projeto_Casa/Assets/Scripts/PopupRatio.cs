@@ -4,15 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace AssemblyCSharp{
-public class PopupRatio : MonoBehaviour {
-
-		private GameObject panel;
-		private GameObject canvas;
+	public class PopupRatio : Popup {
+		
 		private GameObject mySquare;
 		private InputField[] args;
-		private ClickEvent myEvents;
 
-		public static void CreateRatioBox(GameObject popup, ClickEvent e, GameObject square){
+
+		public static void CreateRatioBox(GameObject popup, Controller e, GameObject square){
 			//Creating a Canvas:
 			GameObject canvas = new GameObject("Canvas");
 			Canvas c = canvas.AddComponent<Canvas>();
@@ -25,24 +23,12 @@ public class PopupRatio : MonoBehaviour {
 			panel.transform.SetParent (canvas.transform, false);
 			panel.GetComponent<PopupRatio> ().SetPopupObject (panel);
 			panel.GetComponent<PopupRatio> ().SetCanvasObject (canvas);
-			panel.GetComponent<PopupRatio> ().SetEventObject (e);
+			panel.GetComponent<PopupRatio> ().SetControllerObject (e);
 			panel.GetComponent<PopupRatio> ().SetAreaObject (square);
 
 			InputField[] array = panel.GetComponentsInChildren<InputField> ();
 			// A ordem é largura e comprimento.
 			Button refresh = panel.GetComponentInChildren<Button>();
-		}
-
-		public void SetPopupObject(GameObject mypopup){
-			panel = mypopup;
-		}
-			
-		public void SetCanvasObject(GameObject mycanvas){
-			canvas = mycanvas;
-		}
-
-		public void SetEventObject(ClickEvent e){
-			myEvents = e;
 		}
 
 		public void SetAreaObject(GameObject square){
@@ -68,9 +54,9 @@ public class PopupRatio : MonoBehaviour {
 				worldYRatio *= -1;
 			myXRatio = worldXRatio / myXRatio;
 			myYRatio = worldYRatio / myYRatio;
-			myEvents.SetRatios (myXRatio, myYRatio);
+			Controller.SetRatios (myXRatio, myYRatio);
 			Debug.Log (myYRatio);
-			myEvents.popupOpen = false;
+			Controller.popupOpen = false;
 			Destroy (mySquare);
 			Destroy (canvas);
 		}

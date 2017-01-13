@@ -48,12 +48,14 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\ChangeCameras.cs" />
-     <Compile Include="Assets\Scripts\ClickEvent.cs" />
+     <Compile Include="Assets\Scripts\Controller.cs" />
      <Compile Include="Assets\Scripts\Edge.cs" />
-     <Compile Include="Assets\Scripts\InfoPopup.cs" />
-     <Compile Include="Assets\Scripts\MostrarParedes.cs" />
+     <Compile Include="Assets\Scripts\HideMe.cs" />
      <Compile Include="Assets\Scripts\Node.cs" />
+     <Compile Include="Assets\Scripts\Popup.cs" />
+     <Compile Include="Assets\Scripts\PopupInfo.cs" />
      <Compile Include="Assets\Scripts\PopupRatio.cs" />
+     <Compile Include="Assets\Scripts\ShowWalls.cs" />
      <Compile Include="Assets\Scripts\Tags.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

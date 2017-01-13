@@ -1,11 +1,14 @@
-	using UnityEngine;
-	using System.Collections;
-	using System.Collections.Generic;
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
-	namespace AssemblyCSharp{
-	public class ClickEvent : MonoBehaviour {
+namespace AssemblyCSharp{
+	public class Controller : MonoBehaviour {
+		// Define se foi aberta alguma popup:
 		public bool popupOpen;
-		public GameObject popup;
+		// Prefabs requiridos:
+		public GameObject popupRatio;
+		public GameObject popupInfo;
 		private float xratio, zratio;
 		// Raio utilizado para colidir e selecionar um objeto.
 		Ray ray;
@@ -33,6 +36,8 @@
 		private int totalNodes = 0;
 		// Construtor, seta o square como um array de 2 celulas e inicializa a lista de nos.
 		void Start () {
+			xratio = 0;
+			zratio = 0;
 			squares = new GameObject[2];
 			squares [0] = null;
 			squares [1] = null;
@@ -97,12 +102,12 @@
 					lr.SetPosition(3,new Vector3(lr.GetPosition(0).x,height,hit.point.z));
 					lr.SetPosition(4,new Vector3(lr.GetPosition(0).x,height,lr.GetPosition(0).z));
 				}
-			
+
 			}
 			if (Input.GetKeyUp (KeyCode.S)&& !popupOpen) {
 				string[] vec = { tag };
 				//new RatioPopup (vec, this, lastObject);
-				PopupRatio.CreateRatioBox (popup,this,lastObject);
+				PopupRatio.CreateRatioBox (popupRatio,this,lastObject);
 				lastObject = null;
 				popupOpen = true;
 				option = -1;
@@ -131,15 +136,13 @@
 					e.edge.GetComponent<BoxCollider> ().size = new Vector3 (1, 0, 1);
 				}
 			}
-			if (Input.GetKey (KeyCode.Mouse1) && tag == "line") {
-				//#if UNITY_EDITOR
-				new  InfoPopup (edges,hit.transform.gameObject,this);
-				//Resources.FindObjectsOfTypeAll(typeof(InfoPopup));
-				//Resources.FindObjectsOfTypeAll<> ();
-				//#endif
+			if (Input.GetKey (KeyCode.Mouse1) && tag == "line" && !popupOpen) {
+				option = -1;
+				PopupInfo.CreateInfoBox(popupInfo,this,edges,hit.transform.gameObject);
+				popupOpen = true;
 			}
 		}
-			
+
 		// Funcao para rotacionar o objeto em 90 graos.
 		public void Rotate(){
 			string tag = hit.transform.gameObject.tag;
@@ -159,7 +162,6 @@
 			if(Input.GetButtonDown("Fire1") && option == index && tag == Tags.Planta() ){
 				GameObject obj=Instantiate(prefab[option - 1],new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
 				obj.transform.Rotate(new Vector3(90F,0F,0F));
-				Debug.Log (obj.name);
 				nodes.AddLast (new Node (obj, obj.tag,obj.name));
 				totalNodes++;
 			}
@@ -170,7 +172,6 @@
 			// Se o raio estiver colidindo com a planta, cria um marcador.
 			if(Input.GetButtonDown("Fire1") && option == 2 && hit.transform.gameObject.tag == Tags.Planta() ){ 
 				lastObject = Instantiate(prefab[option -1],new Vector3(hit.point.x,0,hit.point.z), Quaternion.identity) as GameObject;
-				Debug.Log ("Objeto instanciado -- " + lastObject);
 				// Se o primeiro marcador nao estiver criado, o segundo tambem nao foi criado, logo nao ha marcas
 				// entao cria-se um marcador na primeira celula. Vai pro else no proximo marcador criado.
 				if (squares [0] == null)
@@ -242,7 +243,6 @@
 				if (lastObject != null) {
 					// Pego o renderizador de linha do ultimo objeto criado e mexo somente o ultimo vertice.
 					// Isso da todo o efeito de drag.
-					Debug.Log ("Teste 6");
 					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
 					lr.SetPosition (1, new Vector3 (hit.point.x, height, hit.point.z));
 				}
@@ -327,16 +327,15 @@
 						} else {
 							//So move aresta vertical se estiver fazendo o mov apartir do node inferior.
 							if (lastObject.transform.position.y == e.height) {
-								Debug.Log ("Falta Mover Parte inferior...");
 								lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
 									lastObject.transform.position.z));
 								lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
 									lastObject.transform.position.z));
-							
+
 							}
-							
+
 						}
-							
+
 					}
 				}
 			}
@@ -373,8 +372,6 @@
 				result += Vector3.Distance (lr.GetPosition (0), lr.GetPosition (1));
 				resultrw+= Vector3.Distance (reworkedA, reworkedB);
 			}
-			//Debug.Log ("Distancia total = " + result);
-			//Debug.Log ("Distancia total retrabalhada = " + resultrw);
 		}
 
 		// Metodo para botao setar opcao.
@@ -463,4 +460,4 @@
 			height = 2.5F;	
 		}
 	}
-	}
+}
