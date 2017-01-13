@@ -26,6 +26,11 @@ namespace AssemblyCSharp
 		protected void SetControllerObject(Controller e){
 			Controller = e;
 		}
+
+		public void OnClickToDestroy(){
+			Destroy (panel);
+		}
+
 	}
 }
 

@@ -9,11 +9,29 @@ namespace AssemblyCSharp
 	{
 
 		public GameObject contentToAdd;
-		private int totalObjects;
+		private LinkedList<GameObject> myContent;
 		private GameObject view;
 		private Text length;
 		private Dropdown type;
-		private Dropdown kind;
+		private Dropdown conductor;
+
+		void Update(){
+			if (myContent != null && myContent.Count > 0) {
+				bool trigger = false;
+				GameObject[] array = new GameObject[myContent.Count];
+				myContent.CopyTo (array, 0);
+
+				for (int i = 0; i < array.Length; i++) {
+					if (trigger) {
+						array[i].transform.position += new Vector3 (0, +50, 0);
+					}
+					if (array [i] == null) {
+						myContent.Remove (array [i]);
+						trigger = true;
+					}
+				}
+			}
+		}
 
 		public static void CreateInfoBox(GameObject popup, Controller e, LinkedList<Edge> edges, GameObject myEdge){
 			//Creating a Canvas:
@@ -25,7 +43,7 @@ namespace AssemblyCSharp
 			//Creating a Panel:
 			GameObject panel = Instantiate(popup);
 			panel.transform.SetParent (canvas.transform, false);
-			panel.GetComponent<PopupInfo> ().totalObjects = 0;
+			panel.GetComponent<PopupInfo> ().myContent = new LinkedList<GameObject> ();
 			panel.GetComponent<PopupInfo> ().SetPopupObject (panel);
 			panel.GetComponent<PopupInfo> ().SetCanvasObject (canvas);
 			panel.GetComponent<PopupInfo> ().SetControllerObject (e);
@@ -82,7 +100,7 @@ namespace AssemblyCSharp
 		}
 
 		private void SetKindObject(Dropdown mykind){
-			kind = mykind;
+			conductor = mykind;
 		}
 
 		public void OnClickExit(){
@@ -91,12 +109,14 @@ namespace AssemblyCSharp
 		}
 
 		public void OnClickAdd(){
-			GameObject viewport = GameObject.Find ("Viewport");
+			GameObject content = GameObject.Find ("Content");
 			GameObject info = Instantiate (contentToAdd);
-			info.transform.SetParent (viewport.transform, false);
-			info.transform.position += new Vector3 (0, -50*totalObjects, 0);
-			totalObjects++;
+			info.transform.SetParent (content.transform, false);
+			info.transform.position += new Vector3 (0, -50*myContent.Count, 0);
+			info.GetComponent<PopupInfo> ().SetPopupObject (info);
+			myContent.AddLast (info);
 		}
+			
 	}
 }
 

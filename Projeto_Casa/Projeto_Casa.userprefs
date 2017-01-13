@@ -4,8 +4,8 @@
     <Files>
       <File FileName="Assets\Scripts\PopupRatio.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Controller.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\PopupInfo.cs" Line="92" Column="3" />
-      <File FileName="Assets\Scripts\Popup.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PopupInfo.cs" Line="36" Column="48" />
+      <File FileName="Assets\Scripts\Popup.cs" Line="30" Column="34" />
       <File FileName="Assets\Scripts\HideMe.cs" Line="15" Column="55" />
     </Files>
   </MonoDevelop.Ide.Workbench>
