@@ -6,25 +6,23 @@
 	{
 	public class Node : MonoBehaviour
 	{
-		private GameObject obj;
 		private LinkedList<Edge> edges;
 		private string label;
 		private string name;
-		public Node (GameObject obj, string label, string name)
+		public void CreateNode (string label, string name)
 		{
-			this.obj = obj;
 			this.label = label;
 			edges = new LinkedList<Edge> ();
 			this.name = name;
 		}
 		public GameObject GetObject(){
-			return obj;
+			return gameObject;
 		}
 		public string GetLabel(){
 			return label;
 		}
 		public bool Compare(GameObject other){
-			return other.Equals (obj);
+			return other.Equals (gameObject);
 		}
 		public static bool isNode(string tag){
 			return (tag == Tags.EmbutidaLaje() || tag == Tags.NoBaixo());
@@ -41,24 +39,6 @@
 			foreach (Node n in nodes) {
 				// Cria um dicionario.
 				n.RemoveEdge(edge);
-			}
-		}
-
-		public static void DestroyNode(LinkedList<Node> nodes, GameObject node){
-			Node[] n = new Node[nodes.Count];
-			nodes.CopyTo(n,0);
-			for (int i = 0; i < nodes.Count; i++) {
-				if (n[i].Compare (node)) {
-					Debug.Log ("Node apagado =>" + n [i].name);
-					foreach (Edge e in n[i].GetEdges()) {
-						Destroy (e.edge);
-					}
-					nodes = new LinkedList<Node> ();
-					for(int j = 0; j < n.Length; j++) {
-						if (j != i)
-							nodes.AddLast (n [j]);
-					}
-				}
 			}
 		}
 

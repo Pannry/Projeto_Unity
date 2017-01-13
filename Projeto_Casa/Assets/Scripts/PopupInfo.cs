@@ -113,6 +113,28 @@ namespace AssemblyCSharp
 			GameObject info = Instantiate (contentToAdd);
 			info.transform.SetParent (content.transform, false);
 			info.transform.position += new Vector3 (0, -50*myContent.Count, 0);
+			Text[] array = info.GetComponentsInChildren<Text> ();
+			foreach (Text t in array) {
+				if (t.name == "Conductor") {
+					if(conductor.value == 0)
+						t.text += " Fio";
+					else
+						t.text += " Cabo";
+				}
+				if (t.name == "Type") {
+					switch (type.value) {
+					case 0:
+						t.text += " Terra";
+						break;
+					case 1:
+						t.text += " Retorno";
+						break;
+					case 2:
+						t.text += " Fase";
+						break;
+					}
+				}
+			}
 			info.GetComponent<PopupInfo> ().SetPopupObject (info);
 			myContent.AddLast (info);
 		}

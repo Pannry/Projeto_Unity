@@ -66,6 +66,9 @@ namespace AssemblyCSharp{
 				CreateLine ();
 				Info ();
 				Move ();
+				GarbageCollector ();
+				//Debug.Log (":edges::" + edges.Count);
+				//Debug.Log (":nodes::" + nodes.Count);
 				GetTubulationSize ();
 				// Se a opcao de delecao estiver ativa, deleta-se o elemento que o raio colidir.
 				// Note que o elemento sera deletado desde que ele tenha uma tag(Ou seja, nao seja o menu)
@@ -73,10 +76,34 @@ namespace AssemblyCSharp{
 				string tag = hit.transform.gameObject.tag;
 				if(Input.GetButtonDown("Fire1") && option == 99 && tag != Tags.SemTag()
 					&& tag != Tags.Planta() ){
-					Node.DestroyNode (nodes,hit.transform.gameObject);
 					Destroy (hit.transform.gameObject);
+					//Node.DestroyNode (nodes,hit.transform.gameObject);
 				}
 			}	
+		}
+		//Destroy Edges
+		public void GarbageCollector(){
+			if (nodes != null && nodes.Count > 0) {
+				Node[] array = new Node[nodes.Count];
+				nodes.CopyTo (array,0);
+				for (int i = 0; i < array.Length; i++) {
+					if (array [i] == null) {
+						nodes.Remove (array [i]);
+					}
+				}
+			}
+			if (edges != null && edges.Count > 0) {
+				Edge[] array = new Edge[edges.Count];
+				edges.CopyTo (array, 0);
+				edges = new LinkedList<Edge> ();
+				for (int i = 0; i < array.Length; i++) {
+					if (array [i].outv == null || array [i].inv == null) {
+						Destroy (array [i].edge);
+					} else {
+						edges.AddLast (array [i]);
+					}
+				}
+			}
 		}
 		//Definir a proporção da planta.
 		public void SetConfigRatio(){
@@ -162,7 +189,9 @@ namespace AssemblyCSharp{
 			if(Input.GetButtonDown("Fire1") && option == index && tag == Tags.Planta() ){
 				GameObject obj=Instantiate(prefab[option - 1],new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
 				obj.transform.Rotate(new Vector3(90F,0F,0F));
-				nodes.AddLast (new Node (obj, obj.tag,obj.name));
+				Node n = obj.AddComponent<Node> ();
+				n.CreateNode (obj.tag, obj.name);
+				nodes.AddLast (n);
 				totalNodes++;
 			}
 		}
@@ -258,8 +287,8 @@ namespace AssemblyCSharp{
 				} else {
 					tempEdge = new Edge (tempEdge.edge, tempEdge.inv, obj);
 					edges.AddLast (tempEdge);
-					Node.SearchNodeAndAddEdge (nodes, lastNode, tempEdge, height);
-					Node.SearchNodeAndAddEdge (nodes, obj, tempEdge, height);
+					lastNode.GetComponent<Node>().AddEdge(tempEdge,height);
+					obj.GetComponent<Node>().AddEdge(tempEdge,height);
 					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
 					lr.SetPosition (1, new Vector3 (x, height, z));
 					// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
@@ -275,8 +304,8 @@ namespace AssemblyCSharp{
 						tempEdge = new Edge (linhaVertical, lastNode, obj);
 						tempEdge.isVertical = true;
 						edges.AddLast (tempEdge);
-						Node.SearchNodeAndAddEdge (nodes, lastNode, tempEdge, currentHeight);
-						Node.SearchNodeAndAddEdge (nodes, obj, tempEdge, currentHeight);
+						lastNode.GetComponent<Node> ().AddEdge (tempEdge, currentHeight);
+						obj.GetComponent<Node> ().AddEdge (tempEdge, currentHeight);
 						lastNode = null;
 						tempEdge = null;
 						lastObject = null;
@@ -298,8 +327,9 @@ namespace AssemblyCSharp{
 						tempEdge = new Edge (linhaVertical, lastNode, obj); 
 						tempEdge.isVertical = true;
 						edges.AddLast (tempEdge);
-						Node.SearchNodeAndAddEdge (nodes, lastNode, tempEdge, height); //sempre a altura mais baixa eh salva
-						Node.SearchNodeAndAddEdge (nodes, obj, tempEdge, height);
+						//sempre a altura mais baixa eh salva
+						lastNode.GetComponent<Node> ().AddEdge (tempEdge, height);
+						obj.GetComponent<Node> ().AddEdge (tempEdge, height);
 						lastNode = null;
 						tempEdge = null;
 						lastObject = null;
@@ -363,15 +393,17 @@ namespace AssemblyCSharp{
 		public void GetTubulationSize(){
 			float result = 0;
 			float resultrw = 0;
-			foreach (Edge e in edges) {
-				LineRenderer lr = e.edge.GetComponent<LineRenderer> ();
-				Vector3 reworkedA = new Vector3(lr.GetPosition (0).x * (1/xratio),
-					lr.GetPosition (0).y,lr.GetPosition (0).z * (1/zratio));
-				Vector3 reworkedB = new Vector3(lr.GetPosition (1).x * (1/xratio),
-					lr.GetPosition (1).y,lr.GetPosition (1).z * (1/zratio));
-				result += Vector3.Distance (lr.GetPosition (0), lr.GetPosition (1));
-				resultrw+= Vector3.Distance (reworkedA, reworkedB);
-			}
+			/*foreach (Edge e in edges) {
+				if (e.gameObject != null) {
+					LineRenderer lr = e.edge.GetComponent<LineRenderer> ();
+					Vector3 reworkedA = new Vector3 (lr.GetPosition (0).x * (1 / xratio),
+						                   lr.GetPosition (0).y, lr.GetPosition (0).z * (1 / zratio));
+					Vector3 reworkedB = new Vector3 (lr.GetPosition (1).x * (1 / xratio),
+						                   lr.GetPosition (1).y, lr.GetPosition (1).z * (1 / zratio));
+					result += Vector3.Distance (lr.GetPosition (0), lr.GetPosition (1));
+					resultrw += Vector3.Distance (reworkedA, reworkedB);
+				}
+			}*/
 		}
 
 		// Metodo para botao setar opcao.
