@@ -9,6 +9,11 @@
 		private LinkedList<Edge> edges;
 		private string label;
 		private string name;
+
+		void Update(){
+			RemoveEdge (null);
+		}
+
 		public void CreateNode (string label, string name)
 		{
 			this.label = label;
@@ -27,15 +32,8 @@
 		public static bool isNode(string tag){
 			return (tag == Tags.EmbutidaLaje() || tag == Tags.NoBaixo());
 		}
-		public static void SearchNodeAndAddEdge(LinkedList<Node> nodes, GameObject node ,Edge edge, float h){
-			foreach (Node n in nodes) {
-				if (n.Compare (node)) {
-					n.AddEdge (edge, h);
-					break;
-				}
-			}
-		}
-		public static void SearchNodeAndDestroyEdge(LinkedList<Node> nodes,GameObject edge){
+
+		public static void DestroyEdgeInNodes(LinkedList<Node> nodes,GameObject edge){
 			foreach (Node n in nodes) {
 				// Cria um dicionario.
 				n.RemoveEdge(edge);
@@ -47,7 +45,7 @@
 			edges.CopyTo (e, 0);
 			edges = new LinkedList<Edge> ();
 			for (int i = 0; i < e.Length; i++) {
-				if (!e [i].edge.Equals (edge))
+				if (!e [i].gameObject.Equals (edge))
 					edges.AddLast (e [i]);
 			}
 

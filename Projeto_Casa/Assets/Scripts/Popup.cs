@@ -27,7 +27,7 @@ namespace AssemblyCSharp
 			Controller = e;
 		}
 
-		public void OnClickToDestroy(){
+		public virtual void OnClickToDestroy(){
 			Destroy (panel);
 		}
 

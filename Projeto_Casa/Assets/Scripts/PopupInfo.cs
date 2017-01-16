@@ -8,6 +8,7 @@ namespace AssemblyCSharp
 	public class PopupInfo : Popup
 	{
 
+		private GameObject edge;
 		public GameObject contentToAdd;
 		private LinkedList<GameObject> myContent;
 		private GameObject view;
@@ -33,7 +34,34 @@ namespace AssemblyCSharp
 			}
 		}
 
+		void Start(){
+			if(gameObject.name == "PopupInfo(Clone)")
+				GetContent ();
+		}
+
+		public void GetContent(){
+			GameObject content = GameObject.Find ("Content");
+			foreach (Conductor c in edge.GetComponent<Edge>().content) {
+				GameObject info = Instantiate (contentToAdd);
+				info.transform.SetParent (content.transform, false);
+				info.transform.position += new Vector3 (0, -50*myContent.Count, 0);
+				Text[] array = info.GetComponentsInChildren<Text> ();
+				foreach (Text t in array) {				
+					if (t.name == "Conductor") {
+						t.text += c.GetConductor ();
+					}
+					if (t.name == "Type") {
+						t.text += c.GetType();
+					}
+				}
+				info.GetComponent<PopupInfo> ().SetPopupObject (info);
+				myContent.AddLast (info);
+
+			}
+		}
+
 		public static void CreateInfoBox(GameObject popup, Controller e, LinkedList<Edge> edges, GameObject myEdge){
+			
 			//Creating a Canvas:
 			GameObject canvas = new GameObject("Canvas");
 			Canvas c = canvas.AddComponent<Canvas>();
@@ -47,6 +75,7 @@ namespace AssemblyCSharp
 			panel.GetComponent<PopupInfo> ().SetPopupObject (panel);
 			panel.GetComponent<PopupInfo> ().SetCanvasObject (canvas);
 			panel.GetComponent<PopupInfo> ().SetControllerObject (e);
+			panel.GetComponent<PopupInfo> ().SetEdge(myEdge);
 			RectTransform[] array = panel.GetComponentsInChildren<RectTransform> ();
 			foreach (RectTransform ele in array) {
 				if (ele.name == "Length") {
@@ -63,7 +92,7 @@ namespace AssemblyCSharp
 				}
 			}
 			foreach ( Edge a in edges) {
-				if (a.edge.Equals (myEdge)) {
+				if (a.gameObject.Equals (myEdge)) {
 					LineRenderer lr = myEdge.GetComponent<LineRenderer> ();
 					if (!a.isVertical) {
 						float xratio = panel.GetComponent<PopupInfo> ().Controller.GetRatios () [0];
@@ -103,6 +132,10 @@ namespace AssemblyCSharp
 			conductor = mykind;
 		}
 
+		private void SetEdge(GameObject _edge){
+			edge = _edge;
+		}
+
 		public void OnClickExit(){
 			Controller.popupOpen = false;
 			Destroy (canvas);
@@ -114,29 +147,51 @@ namespace AssemblyCSharp
 			info.transform.SetParent (content.transform, false);
 			info.transform.position += new Vector3 (0, -50*myContent.Count, 0);
 			Text[] array = info.GetComponentsInChildren<Text> ();
-			foreach (Text t in array) {
+			Conductor toInsert = new Conductor();
+			foreach (Text t in array) {				
 				if (t.name == "Conductor") {
+					string s = "";
 					if(conductor.value == 0)
-						t.text += " Fio";
+						s = " Fio";
 					else
-						t.text += " Cabo";
+						s = " Cabo";
+					t.text += s;
+					toInsert.SetConductor (s);
 				}
 				if (t.name == "Type") {
+					string s = "";
 					switch (type.value) {
 					case 0:
-						t.text += " Terra";
+						s = " Terra";
 						break;
 					case 1:
-						t.text += " Retorno";
+						s = " Retorno";
 						break;
 					case 2:
-						t.text += " Fase";
+						s = " Fase";
 						break;
 					}
+					t.text += s;
+					toInsert.SetType (s);
+					edge.GetComponent<Edge> ().InsertContent (toInsert);
 				}
 			}
 			info.GetComponent<PopupInfo> ().SetPopupObject (info);
 			myContent.AddLast (info);
+		}
+			
+		public override void OnClickToDestroy(){
+			GameObject parent = GameObject.Find ("PopupInfo(Clone)");
+			GameObject[] array = new GameObject[parent.GetComponentInParent<PopupInfo>().myContent.Count];
+			parent.GetComponentInParent<PopupInfo>().myContent.CopyTo (array, 0);
+			base.OnClickToDestroy ();
+			for (int i = 0; i < array.Length; i++) {
+				if (array [i] == gameObject) {
+					//chama método
+					parent.GetComponentInParent<PopupInfo>().edge.GetComponent<Edge>().RemoveContent(i);
+					break;
+				}
+			}
 		}
 			
 	}

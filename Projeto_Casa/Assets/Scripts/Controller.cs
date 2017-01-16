@@ -98,7 +98,7 @@ namespace AssemblyCSharp{
 				edges = new LinkedList<Edge> ();
 				for (int i = 0; i < array.Length; i++) {
 					if (array [i].outv == null || array [i].inv == null) {
-						Destroy (array [i].edge);
+						Destroy (array [i].gameObject);
 					} else {
 						edges.AddLast (array [i]);
 					}
@@ -157,10 +157,10 @@ namespace AssemblyCSharp{
 			z = hit.point.z;
 			if (Input.GetKeyDown (KeyCode.Mouse1)) {
 				foreach (Edge e in edges) {
-					if (e.edge.GetComponent<BoxCollider> () == null) {
-						e.edge.AddComponent<BoxCollider> ();
+					if (e.gameObject.GetComponent<BoxCollider> () == null) {
+						e.gameObject.AddComponent<BoxCollider> ();
 					}
-					e.edge.GetComponent<BoxCollider> ().size = new Vector3 (1, 0, 1);
+					e.gameObject.GetComponent<BoxCollider> ().size = new Vector3 (1, 0, 1);
 				}
 			}
 			if (Input.GetKey (KeyCode.Mouse1) && tag == "line" && !popupOpen) {
@@ -266,7 +266,9 @@ namespace AssemblyCSharp{
 					lr.SetVertexCount (2);
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
 					lr.SetPosition (0, new Vector3 (x, height, z));
-					tempEdge = new Edge (lastObject, obj, null);
+					//tempEdge = new Edge (lastObject, obj, null);
+					tempEdge = lastObject.AddComponent<Edge>();
+					tempEdge.CreateEdge (obj, null);
 				}
 				// Arrasta o ultimo objeto criado.
 				if (lastObject != null) {
@@ -280,12 +282,13 @@ namespace AssemblyCSharp{
 				// Se a tag não for de nenhum nó, destrua...
 				// Se a linha for solta em algum objeto que nao seja no, sera destruida.
 				if (!Node.isNode (tag)) {
-					Node.SearchNodeAndDestroyEdge (nodes, lastObject);
+					Node.DestroyEdgeInNodes (nodes, lastObject);
 					Destroy (lastObject);
 					lastNode = null;
 					tempEdge = null;
 				} else {
-					tempEdge = new Edge (tempEdge.edge, tempEdge.inv, obj);
+					//tempEdge = new Edge (tempEdge.edge, tempEdge.inv, obj);
+					tempEdge.CreateEdge(tempEdge.inv, obj);
 					edges.AddLast (tempEdge);
 					lastNode.GetComponent<Node>().AddEdge(tempEdge,height);
 					obj.GetComponent<Node>().AddEdge(tempEdge,height);
@@ -293,15 +296,17 @@ namespace AssemblyCSharp{
 					lr.SetPosition (1, new Vector3 (x, height, z));
 					// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
 					if (height > currentHeight) {
-						GameObject linhaVertical = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
-						LineRenderer r = linhaVertical.GetComponent<LineRenderer> ();
+						GameObject verticalLine = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
+						LineRenderer r = verticalLine.GetComponent<LineRenderer> ();
 						r.SetWidth (0.1F, 0.1F);
 						r.SetVertexCount (2);
 						r.SetPosition (0, new Vector3 (x, height, z));
 						// A altura escolhida aqui eh exatamente a altura do no baixo.
 						r.SetPosition (1, new Vector3 (x, currentHeight, z));
 						// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
-						tempEdge = new Edge (linhaVertical, lastNode, obj);
+						// tempEdge = new Edge (linhaVertical, lastNode, obj);
+						tempEdge = verticalLine.AddComponent<Edge>();
+						tempEdge.CreateEdge (lastNode, obj);
 						tempEdge.isVertical = true;
 						edges.AddLast (tempEdge);
 						lastNode.GetComponent<Node> ().AddEdge (tempEdge, currentHeight);
@@ -311,8 +316,8 @@ namespace AssemblyCSharp{
 						lastObject = null;
 
 					} else if (height < currentHeight) {
-						GameObject linhaVertical = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
-						LineRenderer r = linhaVertical.GetComponent<LineRenderer> ();
+						GameObject verticalLine = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
+						LineRenderer r = verticalLine.GetComponent<LineRenderer> ();
 						float lastX, lastZ;
 						lastX = lastNode.transform.position.x;
 						lastZ = lastNode.transform.position.z;
@@ -324,7 +329,9 @@ namespace AssemblyCSharp{
 						// A altura escolhida aqui eh exatamente a altura do quadro eletrico.
 						r.SetPosition (1, new Vector3 (lastX, currentHeight, lastZ));
 						// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
-						tempEdge = new Edge (linhaVertical, lastNode, obj); 
+						//tempEdge = new Edge (linhaVertical, lastNode, obj); 
+						tempEdge = verticalLine.AddComponent<Edge>();
+						tempEdge.CreateEdge (lastNode, obj);
 						tempEdge.isVertical = true;
 						edges.AddLast (tempEdge);
 						//sempre a altura mais baixa eh salva
@@ -339,33 +346,26 @@ namespace AssemblyCSharp{
 		}
 
 		private void MoveEdges(){
-			Node aux;
-			foreach (Node n in nodes) {
-				int count = 0;
-				if (n.Compare (lastObject)) {
-					foreach (Edge e in n.GetEdges()) {
-						LineRenderer lr = e.edge.GetComponent<LineRenderer> ();
-						//Se Reta horizontal...
-						if (!e.isVertical) {
-							if (lastObject.Equals (e.inv)) {
-								lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
-									lastObject.transform.position.z));
-							} else if (lastObject.Equals (e.outv)) {
-								lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
-									lastObject.transform.position.z));
-							}
-						} else {
-							//So move aresta vertical se estiver fazendo o mov apartir do node inferior.
-							if (lastObject.transform.position.y == e.height) {
-								lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
-									lastObject.transform.position.z));
-								lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
-									lastObject.transform.position.z));
-
-							}
-
+			foreach (Edge e in lastObject.GetComponent<Node>().GetEdges()) {
+				if (e.gameObject != null) {
+					LineRenderer lr = e.gameObject.GetComponent<LineRenderer> ();
+					//Se Reta horizontal...
+					if (!e.isVertical) {
+						if (lastObject.Equals (e.inv)) {
+							lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
+								lastObject.transform.position.z));
+						} else if (lastObject.Equals (e.outv)) {
+							lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
+								lastObject.transform.position.z));
 						}
-
+					} else {
+						//So move aresta vertical se estiver fazendo o mov apartir do node inferior.
+						if (lastObject.transform.position.y == e.height) {
+							lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
+								lastObject.transform.position.z));
+							lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
+								lastObject.transform.position.z));
+						}
 					}
 				}
 			}
