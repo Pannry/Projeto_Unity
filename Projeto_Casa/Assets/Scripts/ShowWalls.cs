@@ -2,19 +2,22 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class MostrarParedes : MonoBehaviour {
+public class ShowWalls : MonoBehaviour {
 
 	private bool opt;
 
-	public GameObject walls;
+	private GameObject[] walls;
 
 	public void clickTest() {
+		walls = GameObject.FindGameObjectsWithTag("parede");
 		if (opt == true) {
-			walls.GetComponent<Renderer>().enabled = !walls.GetComponent<Renderer>().enabled;
+			for(int i = 0; i < walls.Length; i++)
+				walls[i].GetComponent<Renderer>().enabled = !walls[i].GetComponent<Renderer>().enabled;
 			opt = !opt;
 			Debug.Log (opt);
 		} else {
-			walls.GetComponent<Renderer>().enabled = !walls.GetComponent<Renderer>().enabled;
+			for(int i = 0; i < walls.Length; i++)
+				walls[i].GetComponent<Renderer>().enabled = !walls[i].GetComponent<Renderer>().enabled;
 			opt = !opt;
 			Debug.Log (opt);
 		}

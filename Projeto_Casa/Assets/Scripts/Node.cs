@@ -10,7 +10,7 @@
 		private string label;
 		private string name;
 
-		void Update(){
+		void FixedUpdate(){
 			RemoveEdge (null);
 		}
 
@@ -45,7 +45,7 @@
 			edges.CopyTo (e, 0);
 			edges = new LinkedList<Edge> ();
 			for (int i = 0; i < e.Length; i++) {
-				if (!e [i].gameObject.Equals (edge))
+				if (e[i] != null && !e [i].gameObject.Equals (edge))
 					edges.AddLast (e [i]);
 			}
 

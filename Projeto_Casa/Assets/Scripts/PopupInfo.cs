@@ -103,15 +103,28 @@ namespace AssemblyCSharp
 							lr.GetPosition (1).y, lr.GetPosition (1).z * (1 / zratio));
 						float result = Vector3.Distance (reworkedA, reworkedB);
 						Debug.Log (result.ToString ());
-						if(result.ToString().Length > 6)
-							panel.GetComponent<PopupInfo> ().length.text +=" " +result.ToString ().Remove(5);
-						else
-							panel.GetComponent<PopupInfo> ().length.text +=" " +result.ToString ();
-					} else {
-						float result = Vector3.Distance (lr.GetPosition(0), lr.GetPosition(1));
-						panel.GetComponent<PopupInfo> ().length.text +=" " +result.ToString ();
-						Debug.Log (result.ToString ());
-					}
+						if (result.ToString ().Length > 6) {
+							Edge verticalComponentA = myEdge.GetComponent<Edge> ().GetVEdges () [0];
+							Edge verticalComponentB = myEdge.GetComponent<Edge> ().GetVEdges () [1];
+							if (verticalComponentA != null || verticalComponentB != null) {
+								if (verticalComponentB != null) {
+									LineRenderer rb = verticalComponentB.gameObject.GetComponent<LineRenderer>();
+									float distB = Vector3.Distance (rb.GetPosition (0), rb.GetPosition (1));
+									result += distB;
+								}
+								if (verticalComponentA != null){
+									LineRenderer ra = verticalComponentA.gameObject.GetComponent<LineRenderer>();
+									float distA = Vector3.Distance (ra.GetPosition (0), ra.GetPosition (1));
+									result += distA;
+								}
+								panel.GetComponent<PopupInfo> ().length.text += " " + result.ToString ().Remove (5);
+							}
+							else
+								panel.GetComponent<PopupInfo> ().length.text += " " + result.ToString ().Remove (5);
+						} else {
+							panel.GetComponent<PopupInfo> ().length.text += " " + result.ToString ();
+						}
+					} 
 				}
 			}
 		}

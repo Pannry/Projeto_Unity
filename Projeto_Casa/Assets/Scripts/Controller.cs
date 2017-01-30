@@ -63,12 +63,12 @@ namespace AssemblyCSharp{
 					CreateNode (i);
 				SetConfigRatio ();
 				CreateWall ();
-				CreateLine ();
+				CreateConduitCeiling ();
 				Info ();
 				Move ();
 				GarbageCollector ();
-				//Debug.Log (":edges::" + edges.Count);
-				//Debug.Log (":nodes::" + nodes.Count);
+				Debug.Log (":edges::" + edges.Count);
+				Debug.Log (":nodes::" + nodes.Count);
 				GetTubulationSize ();
 				// Se a opcao de delecao estiver ativa, deleta-se o elemento que o raio colidir.
 				// Note que o elemento sera deletado desde que ele tenha uma tag(Ou seja, nao seja o menu)
@@ -89,6 +89,10 @@ namespace AssemblyCSharp{
 				for (int i = 0; i < array.Length; i++) {
 					if (array [i] == null) {
 						nodes.Remove (array [i]);
+					}
+					if (array [i] != null && !Node.isNode (array [i].gameObject.tag)) {
+						nodes.Remove (array [i]);
+						Destroy (array [i].gameObject);
 					}
 				}
 			}
@@ -157,16 +161,22 @@ namespace AssemblyCSharp{
 			z = hit.point.z;
 			if (Input.GetKeyDown (KeyCode.Mouse1)) {
 				foreach (Edge e in edges) {
-					if (e.gameObject.GetComponent<BoxCollider> () == null) {
-						e.gameObject.AddComponent<BoxCollider> ();
+					if (!e.isVertical) {
+						if (e.gameObject.GetComponent<BoxCollider> () == null) 
+							e.gameObject.AddComponent<BoxCollider> ();
+						e.gameObject.GetComponent<BoxCollider> ().size = new Vector3 (1, 0, 1);
 					}
-					e.gameObject.GetComponent<BoxCollider> ().size = new Vector3 (1, 0, 1);
 				}
 			}
 			if (Input.GetKey (KeyCode.Mouse1) && tag == "line" && !popupOpen) {
 				option = -1;
 				PopupInfo.CreateInfoBox(popupInfo,this,edges,hit.transform.gameObject);
 				popupOpen = true;
+				foreach (Edge e in edges) {
+					if (!e.isVertical) {
+						Destroy (e.gameObject.GetComponent<BoxCollider> ());
+					}
+				}
 			}
 		}
 
@@ -185,8 +195,9 @@ namespace AssemblyCSharp{
 		// CreateNode(3), mas CreateNode(4).
 		public void CreateNode(int index){
 			string tag = hit.transform.gameObject.tag;
+			int layer = hit.transform.gameObject.layer;
 			// Se o raio estiver colidindo com a planta, cria o objeto a uma certa altura da planta.
-			if(Input.GetButtonDown("Fire1") && option == index && tag == Tags.Planta() ){
+			if(Input.GetButtonDown("Fire1") && option == index && tag == Tags.Planta()){
 				GameObject obj=Instantiate(prefab[option - 1],new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
 				obj.transform.Rotate(new Vector3(90F,0F,0F));
 				Node n = obj.AddComponent<Node> ();
@@ -229,6 +240,7 @@ namespace AssemblyCSharp{
 					// Finalmente eu escalono o objeto.
 					squares [0].transform.localScale += new Vector3 (scaleX, height, scaleZ);
 					// Reseta os marcadores e deleta a parede(marcador2) nao utilizada.
+					squares [0].tag = "parede";
 					squares [0] = null;
 					Destroy (squares [1]);
 					squares [1] = null;
@@ -238,7 +250,7 @@ namespace AssemblyCSharp{
 		}
 
 		// Cria um eletroduto(linha).
-		public void CreateLine(){
+		public void CreateConduitCeiling(){
 			// Pego as coordenadas do objeto em que o raio colide, então eu vou ter os vertices das
 			// linhas centralizados no node.
 			GameObject obj = hit.transform.gameObject;
@@ -247,6 +259,7 @@ namespace AssemblyCSharp{
 			x = obj.transform.position.x;
 			currentHeight = obj.transform.position.y;
 			z = obj.transform.position.z;
+			float ceilingHeight = 2.8F;
 			//GetButton para drag, Se a tag do meu objeto for nao nula:
 			if (Input.GetButton ("Fire1") && option == 3 && tag != Tags.SemTag ()) { 
 				// Para ser click and click, troque esse evento por true. Desse jeito é click and drag[ACIMA].
@@ -258,14 +271,14 @@ namespace AssemblyCSharp{
 					height = currentHeight;
 					lastNode = obj;
 					// Note que eh criado um objeto a partir de um prefab.
-					lastObject = Instantiate (prefab [option - 1], new Vector3 (x, height, z), Quaternion.identity) as GameObject;
+					lastObject = Instantiate (prefab [option - 1], new Vector3 (x, ceilingHeight, z), Quaternion.identity) as GameObject;
 					// Depois eu pego o renderizador da linha.
 					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
 					lr.SetWidth (0.1F, 0.1F);
 					// E digo que a linha sera formada por 2 vertices.
 					lr.SetVertexCount (2);
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
-					lr.SetPosition (0, new Vector3 (x, height, z));
+					lr.SetPosition (0, new Vector3 (x, ceilingHeight, z));
 					//tempEdge = new Edge (lastObject, obj, null);
 					tempEdge = lastObject.AddComponent<Edge>();
 					tempEdge.CreateEdge (obj, null);
@@ -275,7 +288,7 @@ namespace AssemblyCSharp{
 					// Pego o renderizador de linha do ultimo objeto criado e mexo somente o ultimo vertice.
 					// Isso da todo o efeito de drag.
 					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
-					lr.SetPosition (1, new Vector3 (hit.point.x, height, hit.point.z));
+					lr.SetPosition (1, new Vector3 (hit.point.x, ceilingHeight, hit.point.z));
 				}
 			}
 			if (Input.GetButtonUp ("Fire1") && lastObject != null && option == 3) {
@@ -291,56 +304,54 @@ namespace AssemblyCSharp{
 					tempEdge.CreateEdge(tempEdge.inv, obj);
 					edges.AddLast (tempEdge);
 					lastNode.GetComponent<Node>().AddEdge(tempEdge,height);
-					obj.GetComponent<Node>().AddEdge(tempEdge,height);
+					obj.GetComponent<Node>().AddEdge(tempEdge,currentHeight);
 					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
 					lr.SetPosition (1, new Vector3 (x, height, z));
 					// Aqui, se o no em que a aresta foi solta for um quadro eletrico, eu crio outra aresta na vertical.
-					if (height > currentHeight) {
-						GameObject verticalLine = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
+					if (ceilingHeight > currentHeight) {
+						GameObject verticalLine = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, ceilingHeight, hit.point.z), Quaternion.identity) as GameObject;
 						LineRenderer r = verticalLine.GetComponent<LineRenderer> ();
 						r.SetWidth (0.1F, 0.1F);
 						r.SetVertexCount (2);
-						r.SetPosition (0, new Vector3 (x, height, z));
-						// A altura escolhida aqui eh exatamente a altura do no baixo.
+						r.SetPosition (0, new Vector3 (x, ceilingHeight, z));
 						r.SetPosition (1, new Vector3 (x, currentHeight, z));
-						// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
-						// tempEdge = new Edge (linhaVertical, lastNode, obj);
 						tempEdge = verticalLine.AddComponent<Edge>();
 						tempEdge.CreateEdge (lastNode, obj);
 						tempEdge.isVertical = true;
+						tempEdge.SetVerticalID ("out");
 						edges.AddLast (tempEdge);
 						lastNode.GetComponent<Node> ().AddEdge (tempEdge, currentHeight);
 						obj.GetComponent<Node> ().AddEdge (tempEdge, currentHeight);
-						lastNode = null;
-						tempEdge = null;
-						lastObject = null;
+						lastObject.GetComponent<Edge> ().SetVEdges (tempEdge, null);
 
-					} else if (height < currentHeight) {
+					} if (height < ceilingHeight) {
 						GameObject verticalLine = Instantiate (prefab [option - 1], new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
 						LineRenderer r = verticalLine.GetComponent<LineRenderer> ();
 						float lastX, lastZ;
 						lastX = lastNode.transform.position.x;
 						lastZ = lastNode.transform.position.z;
-						lr.SetPosition (0, new Vector3 (lastX, currentHeight, lastZ));
-						lr.SetPosition (1, new Vector3 (x, currentHeight, z));
+						lr.SetPosition (0, new Vector3 (lastX, ceilingHeight, lastZ));
+						lr.SetPosition (1, new Vector3 (x, ceilingHeight, z));
 						r.SetWidth (0.1F, 0.1F);
 						r.SetVertexCount (2);
 						r.SetPosition (0, new Vector3 (lastX, height, lastZ));
 						// A altura escolhida aqui eh exatamente a altura do quadro eletrico.
-						r.SetPosition (1, new Vector3 (lastX, currentHeight, lastZ));
+						r.SetPosition (1, new Vector3 (lastX, ceilingHeight, lastZ));
 						// Adiciona-se os 3 vertices para mover perpendicularmente ao node.
 						//tempEdge = new Edge (linhaVertical, lastNode, obj); 
 						tempEdge = verticalLine.AddComponent<Edge>();
 						tempEdge.CreateEdge (lastNode, obj);
 						tempEdge.isVertical = true;
+						tempEdge.SetVerticalID ("in");
 						edges.AddLast (tempEdge);
 						//sempre a altura mais baixa eh salva
 						lastNode.GetComponent<Node> ().AddEdge (tempEdge, height);
 						obj.GetComponent<Node> ().AddEdge (tempEdge, height);
-						lastNode = null;
-						tempEdge = null;
-						lastObject = null;
+						lastObject.GetComponent<Edge> ().SetVEdges (lastObject.GetComponent<Edge> ().GetVEdges()[0],tempEdge);
 					}
+					lastNode = null;
+					tempEdge = null;
+					lastObject = null;
 				}
 			}
 		}
@@ -361,10 +372,15 @@ namespace AssemblyCSharp{
 					} else {
 						//So move aresta vertical se estiver fazendo o mov apartir do node inferior.
 						if (lastObject.transform.position.y == e.height) {
-							lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
-								lastObject.transform.position.z));
-							lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
-								lastObject.transform.position.z));
+							// Todas as verticais são filhas de um mesmo par de vertices. Só da pra identificar
+							// sob qual par cada uma deve ficar através do ID.
+							if ((e.outv.Equals (lastObject) && e.GetVerticalID () == "out") ||
+								(e.inv.Equals (lastObject) && e.GetVerticalID () == "in")) {
+								lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
+									lastObject.transform.position.z));
+								lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
+									lastObject.transform.position.z));
+							}
 						}
 					}
 				}
