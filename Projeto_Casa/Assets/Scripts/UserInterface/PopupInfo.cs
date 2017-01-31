@@ -51,7 +51,7 @@ namespace AssemblyCSharp
 						t.text += c.GetConductor ();
 					}
 					if (t.name == "Type") {
-						t.text += c.GetType();
+						t.text += c.GetMyType();
 					}
 				}
 				info.GetComponent<PopupInfo> ().SetPopupObject (info);

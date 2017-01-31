@@ -35,7 +35,7 @@ namespace AssemblyCSharp
 			return conductor;
 		}
 
-		public string GetType(){
+		public string GetMyType(){
 			return type;
 		}
 	}

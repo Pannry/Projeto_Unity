@@ -46,19 +46,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\CameraMovement.cs" />
-     <Compile Include="Assets\Scripts\ChangeCameras.cs" />
-     <Compile Include="Assets\Scripts\Conductor.cs" />
-     <Compile Include="Assets\Scripts\Controller.cs" />
-     <Compile Include="Assets\Scripts\Edge.cs" />
-     <Compile Include="Assets\Scripts\HideMe.cs" />
-     <Compile Include="Assets\Scripts\Node.cs" />
-     <Compile Include="Assets\Scripts\Popup.cs" />
-     <Compile Include="Assets\Scripts\PopupInfo.cs" />
-     <Compile Include="Assets\Scripts\PopupObjectsMenu.cs" />
-     <Compile Include="Assets\Scripts\PopupRatio.cs" />
-     <Compile Include="Assets\Scripts\ShowWalls.cs" />
-     <Compile Include="Assets\Scripts\Tags.cs" />
+     <Compile Include="Assets\Scripts\Camera\CameraMovement.cs" />
+     <Compile Include="Assets\Scripts\Camera\ChangeCameras.cs" />
+     <Compile Include="Assets\Scripts\Controller and Events\ConduitCreator.cs" />
+     <Compile Include="Assets\Scripts\Controller and Events\Controller.cs" />
+     <Compile Include="Assets\Scripts\Controller and Events\Events.cs" />
+     <Compile Include="Assets\Scripts\Controller and Events\MoveHanddle.cs" />
+     <Compile Include="Assets\Scripts\Controller and Events\NodeCreator.cs" />
+     <Compile Include="Assets\Scripts\Controller and Events\WallCreator.cs" />
+     <Compile Include="Assets\Scripts\Data\Conductor.cs" />
+     <Compile Include="Assets\Scripts\Data\Edge.cs" />
+     <Compile Include="Assets\Scripts\Data\InfoQadroEletrico.cs" />
+     <Compile Include="Assets\Scripts\Data\Node.cs" />
+     <Compile Include="Assets\Scripts\Data\Tags.cs" />
+     <Compile Include="Assets\Scripts\UserInterface\HideMe.cs" />
+     <Compile Include="Assets\Scripts\UserInterface\Popup.cs" />
+     <Compile Include="Assets\Scripts\UserInterface\PopupInfo.cs" />
+     <Compile Include="Assets\Scripts\UserInterface\PopupObjectsMenu.cs" />
+     <Compile Include="Assets\Scripts\UserInterface\PopupRatio.cs" />
+     <Compile Include="Assets\Scripts\UserInterface\ShowWalls.cs" />
+ <Reference Include="UnityEngine.Advertisements">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
@@ -73,6 +82,9 @@
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Purchasing">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VR">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>

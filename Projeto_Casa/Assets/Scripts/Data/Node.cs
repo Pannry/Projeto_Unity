@@ -8,7 +8,7 @@
 	{
 		private LinkedList<Edge> edges;
 		private string label;
-		private string name;
+		private string myName;
 
 		void FixedUpdate(){
 			RemoveEdge (null);
@@ -18,7 +18,7 @@
 		{
 			this.label = label;
 			edges = new LinkedList<Edge> ();
-			this.name = name;
+			this.myName = name;
 		}
 		public GameObject GetObject(){
 			return gameObject;
