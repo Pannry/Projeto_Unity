@@ -190,8 +190,17 @@ namespace AssemblyCSharp{
 			}*/
 		}
 
-		// Metodo para botao setar opcao.
 
+		public Edge HasVerticalEdge(GameObject node){
+			Edge[] es = new Edge[edges.Count];
+			edges.CopyTo (es, 0);
+			for (int i = 0; i < es.Length; i++) {
+				if (es [i].inv.Equals (node) && es[i].isVertical) {
+					return es[i];
+				}
+			}
+			return null;
+		}
 
 		public void SetOption(int op){
 			option = op;
