@@ -155,6 +155,7 @@ namespace AssemblyCSharp
 		}
 
 		public void OnClickAdd(){
+			bool add = false;
 			GameObject content = GameObject.Find ("Content");
 			GameObject info = Instantiate (contentToAdd);
 			info.transform.SetParent (content.transform, false);
@@ -186,11 +187,16 @@ namespace AssemblyCSharp
 					}
 					t.text += s;
 					toInsert.SetType (s);
-					edge.GetComponent<Edge> ().InsertContent (toInsert);
+					add = edge.GetComponent<Edge> ().InsertContent (toInsert);
 				}
 			}
-			info.GetComponent<PopupInfo> ().SetPopupObject (info);
-			myContent.AddLast (info);
+			if (add) {
+				info.GetComponent<PopupInfo> ().SetPopupObject (info);
+				myContent.AddLast (info);
+			}
+			if (!add) {
+				Destroy (info);
+			}
 		}
 			
 		public override void OnClickToDestroy(){

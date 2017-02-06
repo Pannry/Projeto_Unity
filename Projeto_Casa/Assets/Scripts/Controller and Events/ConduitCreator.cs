@@ -52,7 +52,7 @@ namespace AssemblyCSharp
 					lastNode = node;
 					lastObject = Instantiate (prefab, new Vector3 (x, ceilingHeight, z), Quaternion.identity) as GameObject;
 					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
-					lr.SetWidth (0.1F, 0.1F);
+					lr.SetWidth (0.05F, 0.05F);
 					// E digo que a linha sera formada por 2 vertices.
 					lr.SetVertexCount (2);
 					// O primeiro vertice eh a posicao onde esse click foi identificado.
@@ -93,7 +93,7 @@ namespace AssemblyCSharp
 						if (tempEdge == null) {
 							GameObject verticalLine = Instantiate (prefab, new Vector3 (hit.point.x, ceilingHeight, hit.point.z), Quaternion.identity) as GameObject;
 							LineRenderer r = verticalLine.GetComponent<LineRenderer> ();
-							r.SetWidth (0.1F, 0.1F);
+							lr.SetWidth (0.05F, 0.05F);
 							r.SetVertexCount (2);
 							r.SetPosition (0, new Vector3 (x, ceilingHeight, z));
 							r.SetPosition (1, new Vector3 (x, currentHeight, z));
@@ -103,7 +103,6 @@ namespace AssemblyCSharp
 							tempEdge.isVertical = true;
 							// Verificando as coordenadas em que a linha foi instanciada, sabemos que esta é referente
 							// ao outter vertex.
-							tempEdge.SetVerticalID ("out");
 							node.GetComponent<Node> ().AddEdge (tempEdge, currentHeight);
 							GetComponent<Controller> ().InsertOnEdges (tempEdge);
 						}
@@ -121,7 +120,7 @@ namespace AssemblyCSharp
 						if (tempEdge == null) {
 							GameObject verticalLine = Instantiate (prefab, new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
 							LineRenderer r = verticalLine.GetComponent<LineRenderer> ();
-							r.SetWidth (0.1F, 0.1F);
+							lr.SetWidth (0.05F, 0.05F);
 							r.SetVertexCount (2);
 							r.SetPosition (0, new Vector3 (lastX, height, lastZ));
 							r.SetPosition (1, new Vector3 (lastX, ceilingHeight, lastZ));
@@ -129,7 +128,6 @@ namespace AssemblyCSharp
 							//Na aresta vertical, o primeiro vertice é referente à posição da aresta.
 							tempEdge.CreateEdge (lastNode, node);
 							tempEdge.isVertical = true;
-							tempEdge.SetVerticalID ("in");
 							GetComponent<Controller> ().InsertOnEdges (tempEdge);
 							lastNode.GetComponent<Node> ().AddEdge (tempEdge, height);
 						}
