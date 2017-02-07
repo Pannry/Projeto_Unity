@@ -59,17 +59,22 @@ namespace AssemblyCSharp
 				foreach(Conductor c in content){
 					
 					GameObject g = c.GetGameObject ();
+					g.transform.rotation = Quaternion.identity;
+					po1 = GetComponent<LineRenderer> ().GetPosition (0);
+					po2 = GetComponent<LineRenderer> ().GetPosition (1);
+					g.transform.Rotate (90, 0, 0);
+					if (group[0]!= null && c.circuit != group [0].circuit) {
+						counter++;
+					}
 					if (counter == 0) {
+						Debug.Log ("c1");
 						group [0] = c;
 						po1 = (po1 + po2) / 2;
 						g.transform.position = po1;
 						DrawIcon (po1, po2, g);
 					}
-
-					if (c.circuit != group [0].circuit) {
-						counter++;
-					}
 					if (counter == 1) {
+						Debug.Log ("c2");
 						group [1] = c;
 						po1 = (po1 + po2) / 2;
 						po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
@@ -78,6 +83,7 @@ namespace AssemblyCSharp
 						DrawIcon (po1, po2, g);
 					}
 					if (counter == 2) {
+						Debug.Log ("c3");
 						group [2] = c;
 						po1 = (po1 + po2) / 2;
 						po1 = (po1 + po2) / 2;
@@ -85,7 +91,7 @@ namespace AssemblyCSharp
 						DrawIcon (po1, po2, g);
 					}
 					for(int i = 0; i < group.Length; i++)
-						if (group [i] != null && c.circuit == group [i].circuit) {
+						if (group [i] != null && c.circuit == group [i].circuit && !group[i].Equals(c)) {
 							g.transform.position = group [i].GetGameObject ().transform.position;
 							g.transform.position += group [i].GetGameObject ().transform.right * .1F;
 							DrawIcon (po1, po2, g);
@@ -95,6 +101,7 @@ namespace AssemblyCSharp
 		}
 
 		private void DrawIcon(Vector3 po1, Vector3 po2, GameObject g){
+			
 			po1 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
 			po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (1);
 			double deltay = po2.z - po1.z;
@@ -227,7 +234,8 @@ namespace AssemblyCSharp
 				}
 			}
 			//Debug.Log ("Retornando " + add);
-
+			if (!add) 
+				if(g!=null) Destroy (g);
 			return add;
 		}
 

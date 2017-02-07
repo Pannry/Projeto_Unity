@@ -24,7 +24,7 @@ namespace AssemblyCSharp
 					LineRenderer lr = e.gameObject.GetComponent<LineRenderer> ();
 					//Se Reta horizontal...
 					if (!e.isVertical) {
-						e.UpdateIcons ();
+						//e.UpdateIcons ();
 						if (lastObject.Equals (e.inv)) {
 							lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
 								lastObject.transform.position.z));
@@ -65,8 +65,13 @@ namespace AssemblyCSharp
 					lastObject.transform.position = new Vector3 (hit.point.x,lastObject.transform.position.y,hit.point.z);
 				}
 				// Quando soltar o botao o node vai parar de se mover, e eu tiro a referencia do lastobject.
-				if (Input.GetButtonUp ("Fire1"))
-					lastObject = null;
+
+			}
+			if (Input.GetButtonUp ("Fire1") && lastObject!=null) {
+				foreach (Edge e in lastObject.GetComponent<Node>().GetEdges()) {
+					e.UpdateIcons ();
+				}
+				lastObject = null;
 			}
 		}
 
