@@ -11,6 +11,8 @@ namespace AssemblyCSharp
 		private string type;
 		private float offset;
 		private int mycircuit;
+		//especial para arestas verticais.
+		public int usedByHowMany;
 
 		public GameObject GetGameObject(){
 			return gameObject;

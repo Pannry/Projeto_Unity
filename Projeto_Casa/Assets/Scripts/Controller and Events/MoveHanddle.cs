@@ -24,6 +24,7 @@ namespace AssemblyCSharp
 					LineRenderer lr = e.gameObject.GetComponent<LineRenderer> ();
 					//Se Reta horizontal...
 					if (!e.isVertical) {
+						e.UpdateIcons ();
 						if (lastObject.Equals (e.inv)) {
 							lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
 								lastObject.transform.position.z));

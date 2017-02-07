@@ -93,7 +93,7 @@ namespace AssemblyCSharp
 						if (tempEdge == null) {
 							GameObject verticalLine = Instantiate (prefab, new Vector3 (hit.point.x, ceilingHeight, hit.point.z), Quaternion.identity) as GameObject;
 							LineRenderer r = verticalLine.GetComponent<LineRenderer> ();
-							lr.SetWidth (0.05F, 0.05F);
+							r.SetWidth (0.05F, 0.05F);
 							r.SetVertexCount (2);
 							r.SetPosition (0, new Vector3 (x, ceilingHeight, z));
 							r.SetPosition (1, new Vector3 (x, currentHeight, z));
@@ -120,7 +120,7 @@ namespace AssemblyCSharp
 						if (tempEdge == null) {
 							GameObject verticalLine = Instantiate (prefab, new Vector3 (hit.point.x, height, hit.point.z), Quaternion.identity) as GameObject;
 							LineRenderer r = verticalLine.GetComponent<LineRenderer> ();
-							lr.SetWidth (0.05F, 0.05F);
+							r.SetWidth (0.05F, 0.05F);
 							r.SetVertexCount (2);
 							r.SetPosition (0, new Vector3 (lastX, height, lastZ));
 							r.SetPosition (1, new Vector3 (lastX, ceilingHeight, lastZ));
