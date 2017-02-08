@@ -20,10 +20,10 @@ namespace AssemblyCSharp
 		public GameObject inv,outv;
 		public float height;
 		public bool isVertical = false;
+		public bool isDown = false;
 		public float radius;
 		public LinkedList<Conductor> content;
 		private Edge[] verticalEdges;
-		public GameObject variavelTeste;
 		private int multiplier; // multiplicador de tamanho.
 
 		public void DoubleMultiplier(){

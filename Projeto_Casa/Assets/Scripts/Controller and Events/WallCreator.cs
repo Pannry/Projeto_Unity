@@ -40,14 +40,19 @@ namespace AssemblyCSharp
 
 		public void CreateWall(float height){
 			int option = GetComponent<Controller> ().GetOption ();
+
 			// Se o raio estiver colidindo com a planta, cria um marcador.
+			//Debug.Log( hit.transform.gameObject.tag == Tags.Planta());
+			//Debug.Log (option);
 			if(Input.GetButtonDown("Fire1") && option == 2 && hit.transform.gameObject.tag == Tags.Planta() ){ 
+				Debug.Log ("teste");
 				DefinePrefab ();
 				lastObject = Instantiate(prefab,new Vector3(hit.point.x,0,hit.point.z), Quaternion.identity) as GameObject;
 				// Se o primeiro marcador nao estiver criado, o segundo tambem nao foi criado, logo nao ha marcas
 				// entao cria-se um marcador na primeira celula. Vai pro else no proximo marcador criado.
-				if (squares [0] == null)
+				if (squares [0] == null) {
 					squares [0] = lastObject;
+				}
 				else {
 					squares [1] = lastObject;
 					// Guardo a posicao inicial do primeiro marcador.

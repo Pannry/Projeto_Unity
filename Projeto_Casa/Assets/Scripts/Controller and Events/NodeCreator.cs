@@ -16,6 +16,7 @@ namespace AssemblyCSharp
 			ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			if (Physics.Raycast (ray, out hit)) {
 				float height = GetComponent<Controller>().GetHeight();
+				if(GetComponent<Controller> ().GetOption () != 2)
 				try{
 					CreateNode (height);
 				}

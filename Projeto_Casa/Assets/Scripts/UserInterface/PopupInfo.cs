@@ -193,6 +193,8 @@ namespace AssemblyCSharp
 			if (add) {
 				info.GetComponent<PopupInfo> ().SetPopupObject (info);
 				myContent.AddLast (info);
+				//Ainda testando labels...apaga aqui quando for mostrar @@@@@@@@@@@@@
+				toInsert.DrawLabel ();
 			}
 			if (!add) {
 				Destroy (info);

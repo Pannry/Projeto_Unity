@@ -202,6 +202,17 @@ namespace AssemblyCSharp{
 			return null;
 		}
 
+		public Edge HasVerticalEdge(GameObject node, bool isDown){
+			Edge[] es = new Edge[edges.Count];
+			edges.CopyTo (es, 0);
+			for (int i = 0; i < es.Length; i++) {
+				if (es [i].inv.Equals (node) && es[i].isVertical && es[i].isDown == isDown) {
+					return es[i];
+				}
+			}
+			return null;
+		}
+
 		public void SetOption(int op){
 			option = op;
 		}

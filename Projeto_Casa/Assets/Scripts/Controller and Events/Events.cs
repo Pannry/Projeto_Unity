@@ -13,6 +13,14 @@ namespace AssemblyCSharp
 
 		public void SetNewLine()
 		{
+			myController.SetOption (16);
+		}
+		public void SetNewLineDown()
+		{
+			myController.SetOption (15);
+		}
+		public void SetNewLineTop()
+		{
 			myController.SetOption (3);
 		}
 		// Metodo para botao setar opcao.
