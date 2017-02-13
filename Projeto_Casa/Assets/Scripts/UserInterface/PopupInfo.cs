@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +11,13 @@ namespace AssemblyCSharp
 
 		private GameObject edge;
 		public GameObject contentToAdd;
+		public GameObject popupChooseCircuit;
 		private LinkedList<GameObject> myContent;
 		private GameObject view;
 		private Text length;
 		private Dropdown type;
 		private Dropdown conductor;
+		private bool isClosed = true;
 
 		void Update(){
 			if (myContent != null && myContent.Count > 0) {
@@ -52,6 +55,9 @@ namespace AssemblyCSharp
 					}
 					if (t.name == "Type") {
 						t.text += c.GetMyType();
+					}
+					if (t.name == "Circuit") {
+						t.text +=" " +c.GetSwitchBoard ();
 					}
 				}
 				info.GetComponent<PopupInfo> ().SetPopupObject (info);
@@ -154,51 +160,100 @@ namespace AssemblyCSharp
 			Destroy (canvas);
 		}
 
-		public void OnClickAdd(){
-			bool add = false;
-			GameObject content = GameObject.Find ("Content");
-			GameObject info = Instantiate (contentToAdd);
-			info.transform.SetParent (content.transform, false);
-			info.transform.position += new Vector3 (0, -50*myContent.Count, 0);
-			Text[] array = info.GetComponentsInChildren<Text> ();
-			Conductor toInsert = new Conductor();
-			foreach (Text t in array) {				
-				if (t.name == "Conductor") {
-					string s = "";
-					if(conductor.value == 0)
-						s = " Fio";
-					else
-						s = " Cabo";
-					t.text += s;
-					toInsert.SetConductor (s);
-				}
-				if (t.name == "Type") {
-					string s = "";
-					switch (type.value) {
-					case 0:
-						s = " Terra";
-						break;
-					case 1:
-						s = " Retorno";
-						break;
-					case 2:
-						s = " Fase";
-						break;
+
+		public void OnClickChooseCircuit(){
+			if (isClosed) {
+				ArrayList frontier = new ArrayList ();
+				frontier.Add (edge.GetComponent<Edge> ().inv.GetComponent<Node> ());
+				ArrayList explored = new ArrayList ();
+				ArrayList result = new ArrayList ();
+				Search.BreadthFirstSearch (explored, frontier, result);
+				Debug.Log ("Total de Quadros: " + result.Count);
+				GameObject popup = Instantiate (popupChooseCircuit);
+				GameObject canvas = GameObject.Find ("Canvas");
+				popup.transform.SetParent (canvas.transform, false);
+				GameObject.Find ("AllCircuits").GetComponent<Text> ().text += "\n";
+				string s = "Cancelar";
+				List<string> slist = new List<string> ();
+				slist.Add (s);
+				GameObject.Find ("ChooseCircuit").GetComponent<Dropdown> ().AddOptions (slist);
+				foreach (Node n in result) {
+					int totalDeCircuitos = n.gameObject.GetComponent<InfoQadroEletrico> ().GetNumberOfCircuits ();
+					for (int i = 0; i < totalDeCircuitos; i++) {
+						s =n.gameObject.GetComponent<InfoQadroEletrico> ().GetID() + i;
+						GameObject.Find ("AllCircuits").GetComponent<Text> ().text += " " + s;
+						slist = new List<string> ();
+						slist.Add (s);
+						GameObject.Find ("ChooseCircuit").GetComponent<Dropdown> ().AddOptions (slist);
 					}
-					t.text += s;
-					toInsert.SetType (s);
-					add = edge.GetComponent<Edge> ().InsertContent (toInsert);
+				}
+				isClosed = false;
+				if (result.Count == 0) {
+					isClosed = true;
+					Destroy (GameObject.Find("PopupChooseCircuit(Clone)"));
 				}
 			}
-			if (add) {
-				info.GetComponent<PopupInfo> ().SetPopupObject (info);
-				myContent.AddLast (info);
-				//Ainda testando labels...apaga aqui quando for mostrar @@@@@@@@@@@@@
-				toInsert.DrawLabel ();
+
+		}
+
+		public void OnClickAdd(){
+			PopupInfo myPopup = GameObject.Find ("PopupInfo(Clone)").GetComponent<PopupInfo> ();
+			Dropdown options = GameObject.Find ("ChooseCircuit").GetComponent<Dropdown> ();
+			string circuit = options.captionText.text;
+			if (circuit != "Cancelar") {
+				bool add = false;
+
+				GameObject content = GameObject.Find ("Content");
+				GameObject info = Instantiate (contentToAdd);
+				info.transform.SetParent (content.transform, false);
+				info.transform.position += new Vector3 (0, -50 * myPopup.myContent.Count, 0);
+				Text[] array = info.GetComponentsInChildren<Text> ();
+				Conductor toInsert = new Conductor ();
+				foreach (Text t in array) {				
+					if (t.name == "Conductor") {
+						string s = "";
+						if (myPopup.conductor.value == 0)
+							s = " Fio";
+						else
+							s = " Cabo";
+						t.text += s;
+						toInsert.SetConductor (s);
+					}
+					if (t.name == "Type") {
+						string s = "";
+						switch (myPopup.type.value) {
+						case 0:
+							s = " Terra";
+							break;
+						case 1:
+							s = " Retorno";
+							break;
+						case 2:
+							s = " Fase";
+							break;
+						case 3:
+							s = "Neutro";
+							break;
+						}
+						t.text += s;
+						toInsert.SetType (s);
+						add = myPopup.edge.GetComponent<Edge> ().InsertContent (toInsert,circuit);
+					}
+					if (t.name == "Circuit")
+						t.text += " " + circuit;
+				}
+				if (add) {
+					info.GetComponent<PopupInfo> ().SetPopupObject (info);
+					myPopup.myContent.AddLast (info);
+					//Ainda testando labels...apaga aqui quando for mostrar @@@@@@@@@@@@@
+					//toInsert.DrawLabel (myPopup.edge);
+				}
+				if (!add) {
+					Destroy (info);
+				}
 			}
-			if (!add) {
-				Destroy (info);
-			}
+			Destroy (GameObject.Find("PopupChooseCircuit(Clone)"));
+			myPopup.isClosed = true;
 		}
 			
 		public override void OnClickToDestroy(){

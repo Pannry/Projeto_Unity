@@ -21,6 +21,14 @@ namespace AssemblyCSharp {
 			
 		}
 
+		public string GetID(){
+			return nomeDoQuadro;
+		}
+
+		public int GetNumberOfCircuits(){
+			return quantidadeDeCircuitos;
+		}
+
 		public void eventoOk(){
 			Debug.Log (gameObject);
 			InputField[] array = janelaInformacao.GetComponentsInChildren<InputField> ();

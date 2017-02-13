@@ -87,6 +87,12 @@ namespace AssemblyCSharp{
 				edges = new LinkedList<Edge> ();
 				for (int i = 0; i < array.Length; i++) {
 					if (array [i].outv == null || array [i].inv == null) {
+						foreach (Conductor c in array[i].content) {
+							if (c.GetGameObject () != null)
+								Destroy (c.GetGameObject ());
+							if (c.GetLabel() != null)
+								Destroy (c.GetLabel());
+						}
 						Destroy (array [i].gameObject);
 					} else {
 						edges.AddLast (array [i]);

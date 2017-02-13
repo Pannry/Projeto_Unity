@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 namespace AssemblyCSharp
 {
@@ -57,7 +58,9 @@ namespace AssemblyCSharp
 			int counter = 0;
 			if(!isVertical)
 				foreach(Conductor c in content){
-					
+					if (c.GetLabel () != null) {
+						c.GetLabel ().transform.rotation = Quaternion.identity;
+					}						
 					GameObject g = c.GetGameObject ();
 					g.transform.rotation = Quaternion.identity;
 					po1 = GetComponent<LineRenderer> ().GetPosition (0);
@@ -71,7 +74,7 @@ namespace AssemblyCSharp
 						group [0] = c;
 						po1 = (po1 + po2) / 2;
 						g.transform.position = po1;
-						DrawIcon (po1, po2, g);
+						RotateIcon (po1, po2, g);
 					}
 					if (counter == 1) {
 						Debug.Log ("c2");
@@ -80,7 +83,7 @@ namespace AssemblyCSharp
 						po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
 						po1 = (po1 + po2) / 2;
 						g.transform.position = po1;
-						DrawIcon (po1, po2, g);
+						RotateIcon (po1, po2, g);
 					}
 					if (counter == 2) {
 						Debug.Log ("c3");
@@ -88,19 +91,20 @@ namespace AssemblyCSharp
 						po1 = (po1 + po2) / 2;
 						po1 = (po1 + po2) / 2;
 						g.transform.position = po1;
-						DrawIcon (po1, po2, g);
+						RotateIcon (po1, po2, g);
 					}
 					for(int i = 0; i < group.Length; i++)
 						if (group [i] != null && c.circuit == group [i].circuit && !group[i].Equals(c)) {
 							g.transform.position = group [i].GetGameObject ().transform.position;
 							g.transform.position += group [i].GetGameObject ().transform.right * .1F;
-							DrawIcon (po1, po2, g);
+							RotateIcon (po1, po2, g);
 							group [i] = c;
 						}
+					c.DrawLabel (gameObject);
 				}
 		}
 
-		private void DrawIcon(Vector3 po1, Vector3 po2, GameObject g){
+		private void RotateIcon(Vector3 po1, Vector3 po2, GameObject g){
 			
 			po1 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
 			po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (1);
@@ -110,19 +114,9 @@ namespace AssemblyCSharp
 			float angle = (float)(Math.Atan (m))* 57.2958F;
 			g.transform.Rotate(new Vector3 (0, 0, angle));//Convertendod de radiano para grao.
 		}
-
-		private void RedrawIcon(Vector3 po1, Vector3 po2, GameObject g){
 			
-			po1 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
-			po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (1);
-			double deltay = po2.z - po1.z;
-			double deltax = po2.x - po1.x;
-			double m = deltay / deltax;
-			float angle = (float)(Math.Atan (m))* 57.2958F;
-			g.transform.Rotate (new Vector3 (0, 0, -angle));//Convertendod de radiano para grao.
-		}
 
-		public bool InsertContent(Conductor c){
+		public bool InsertContent(Conductor c, string circuit){
 			if (content.Count >= 9*multiplier) {
 				Debug.Log ("Erro, maximo de fios tolerados alcancado.");
 				return false;
@@ -137,7 +131,11 @@ namespace AssemblyCSharp
 			Vector3 po1 = new Vector3(), po2 = new Vector3();
 			GameObject g = null;
 			if (!isVertical) {
-				c.SetCircuit(new System.Random().Next(1,6));
+				string resultString = Regex.Match (circuit, @"\d+").Value;
+				int circuit_int = -1;
+				int.TryParse (resultString, out circuit_int);
+				c.SetCircuit(circuit_int);
+				c.SetSwitchBoard (circuit);
 				po1 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
 				po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (1);
 				g = Instantiate (GameObject.Find (c.GetMyType ().ToLower ().Trim ())) as GameObject;
@@ -151,7 +149,8 @@ namespace AssemblyCSharp
 				if (!isVertical) {
 					po1 = (po1 + po2) / 2;
 					g.transform.position = po1;
-					DrawIcon (po1, po2, g);
+					RotateIcon (po1, po2, g);
+					c.DrawLabel (gameObject);
 				}
 				add = true;
 			} else {
@@ -176,7 +175,7 @@ namespace AssemblyCSharp
 							g.transform.position = x.GetGameObject ().transform.position;
 							g.transform.position += x.GetGameObject ().transform.right * .1F;
 							if (!rotated) {
-								DrawIcon (po1, po2, g);
+								RotateIcon (po1, po2, g);
 								rotated = true;
 							}
 						}
@@ -201,7 +200,8 @@ namespace AssemblyCSharp
 						po1 = (po1 + po2) / 2;
 					}
 					g.transform.position = po1;
-					DrawIcon (po1, po2, g);
+					RotateIcon (po1, po2, g);
+					c.DrawLabel (gameObject);
 					add = true;
 				} else if (totalCircuits.Count >= 4 && !isVertical) {
 					Debug.Log ("Erro! Já existem 3 agrupamentos de circuitos nesse eletroduto, delete um agrupamento para inserir" +
@@ -221,11 +221,11 @@ namespace AssemblyCSharp
 				content.AddLast (c);
 				bool add1 = false;
 				if (verticalEdges [0] != null) {
-					add1 = verticalEdges [0].InsertContent (c);
+					add1 = verticalEdges [0].InsertContent (c,circuit);
 					add = add && add1;
 				}
 				if (verticalEdges [1] != null) {
-					add1 = verticalEdges [1].InsertContent (c);
+					add1 = verticalEdges [1].InsertContent (c,circuit);
 					add = add && add1;
 				}
 				if (!add) {
@@ -254,6 +254,7 @@ namespace AssemblyCSharp
 			Conductor[] array = new Conductor[content.Count];
 			content.CopyTo (array, 0);
 			if (!isVertical) {
+				Destroy (array [i].GetLabel ());
 				content.Remove (array [i]);
 				if (verticalEdges [0] != null) {
 					Conductor[] arrayAux = new Conductor[verticalEdges [0].content.Count];
@@ -289,6 +290,7 @@ namespace AssemblyCSharp
 				array [i].usedByHowMany--;
 
 			}
+			UpdateIcons ();
 		}
 
 		public void SetVEdges(Edge e1, Edge e2){
