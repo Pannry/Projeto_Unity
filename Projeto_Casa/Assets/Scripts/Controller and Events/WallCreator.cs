@@ -33,11 +33,20 @@ namespace AssemblyCSharp
 			}
 		}
 
+		/// <summary>
+		/// Defines the prefab.
+		/// </summary>
 		public void DefinePrefab(){
 			int option = GetComponent<Controller> ().GetOption ();
 			prefab = GetComponent<Controller> ().prefab [option - 1];
 		}
 
+		/// <summary>
+		/// Creates the wall.
+		/// Na primeira acao é criado um ponto inicial da parede.
+		/// Depois um segundo ponto, onde são definidos largura e comprimento.
+		/// </summary>
+		/// <param name="height">Height.</param>
 		public void CreateWall(float height){
 			int option = GetComponent<Controller> ().GetOption ();
 

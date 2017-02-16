@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 namespace AssemblyCSharp
 {
-	public class Conductor
+	public class Conductor : MonoBehaviour
 	{
 		private string switchboard;
 		private GameObject gameObject;
@@ -63,6 +63,7 @@ namespace AssemblyCSharp
 
 		public Conductor(){
 		}
+			
 
 		public string Print(){
 			string s = conductor + "   " + type;

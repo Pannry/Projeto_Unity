@@ -10,7 +10,11 @@ namespace AssemblyCSharp
 		private Ray ray;
 		private RaycastHit hit;
 		private GameObject lastObject;
-
+		/// <summary>
+		/// Constantemente fica fazendo atualizações a fim de mover um vertice selecionado.
+		/// Isso só vai acontecer se o usuário clicar no botão de mover, para ser chamado
+		/// o evento de mover que muda a opção do controle para a opção de movimento.
+		/// </summary>
 		void Update(){
 			ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			if (Physics.Raycast (ray, out hit)) {
@@ -18,6 +22,9 @@ namespace AssemblyCSharp
 			}
 		}
 
+		/// <summary>
+		/// Move as arestas do vertice arrastado.
+		/// </summary>
 		private void MoveEdges(){
 			foreach (Edge e in lastObject.GetComponent<Node>().GetEdges()) {
 				if (e.gameObject != null) {
@@ -48,7 +55,9 @@ namespace AssemblyCSharp
 				}
 			}
 		}
-
+		/// <summary>
+		/// Função simples para mover o vértice.
+		/// </summary>
 		public void Move(){
 			int option = GetComponent<Controller> ().GetOption ();
 			// Pega a tag do objeto que o raio colidir.

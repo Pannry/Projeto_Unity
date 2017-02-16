@@ -3,12 +3,21 @@ using UnityEngine;
 
 namespace AssemblyCSharp
 {
+	/// <summary>
+	/// Events.
+	/// Todos são eventos chamados por botões.
+	/// Determinam qual prefab será usado.
+	/// </summary>
 	public class Events : MonoBehaviour
 	{
 		private Controller myController;
 
 		void Start(){
 			myController = GetComponent<Controller> ();
+		}
+
+		public void SetSelectionBox(){
+			myController.SetOption (17);
 		}
 
 		public void SetNewLine()

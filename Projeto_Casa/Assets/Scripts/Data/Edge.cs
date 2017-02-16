@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -51,10 +52,7 @@ namespace AssemblyCSharp
 			Vector3 po1,po2;
 			po1 = GetComponent<LineRenderer> ().GetPosition (0);
 			po2 = GetComponent<LineRenderer> ().GetPosition (1);
-			Conductor[] group = new Conductor[3];
-			group [0] = null;
-			group [1] = null;
-			group [2] = null;
+			ArrayList group = new ArrayList ();
 			int counter = 0;
 			if(!isVertical)
 				foreach(Conductor c in content){
@@ -66,46 +64,52 @@ namespace AssemblyCSharp
 					po1 = GetComponent<LineRenderer> ().GetPosition (0);
 					po2 = GetComponent<LineRenderer> ().GetPosition (1);
 					g.transform.Rotate (90, 0, 0);
-					if (group[0]!= null && c.circuit != group [0].circuit) {
+					if (group.Count != 0 && c.circuit != ((Conductor)group [0]).circuit) {
 						counter++;
 					}
-					if (counter == 0) {
+					if (group.Count == 0 && counter == 0) {
 						Debug.Log ("c1");
-						group [0] = c;
+						group.Add (c);
 						po1 = (po1 + po2) / 2;
 						g.transform.position = po1;
 						RotateIcon (po1, po2, g);
+						c.DrawLabel (gameObject);
 					}
-					if (counter == 1) {
+					if (group.Count == 1 && counter == 1) {
 						Debug.Log ("c2");
-						group [1] = c;
+						group.Add (c);
 						po1 = (po1 + po2) / 2;
 						po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
 						po1 = (po1 + po2) / 2;
 						g.transform.position = po1;
 						RotateIcon (po1, po2, g);
+						c.DrawLabel (gameObject);
 					}
-					if (counter == 2) {
+					if (counter == 2 && counter == 2) {
 						Debug.Log ("c3");
-						group [2] = c;
+						group.Add (c);
 						po1 = (po1 + po2) / 2;
 						po1 = (po1 + po2) / 2;
 						g.transform.position = po1;
 						RotateIcon (po1, po2, g);
+						c.DrawLabel (gameObject);
 					}
-					for(int i = 0; i < group.Length; i++)
-						if (group [i] != null && c.circuit == group [i].circuit && !group[i].Equals(c)) {
-							g.transform.position = group [i].GetGameObject ().transform.position;
-							g.transform.position += group [i].GetGameObject ().transform.right * .1F;
-							RotateIcon (po1, po2, g);
+					for (int i = 0; i < group.Count; i++) {
+						Debug.Log ("@Test.");
+						if (group [i] != null && c.GetSwitchBoard () == ((Conductor)group [i]).GetSwitchBoard ()
+							&& ((Conductor)group [i]).GetMyType () != c.GetMyType ()) {
+							Debug.Log ("Test.");
+							g.transform.position = ((Conductor)group [i]).GetGameObject ().transform.position;
+							g.transform.position += ((Conductor)group [i]).GetGameObject ().transform.right * .1F;
+							g.transform.rotation = ((Conductor)group [i]).GetGameObject ().transform.rotation;
 							group [i] = c;
 						}
-					c.DrawLabel (gameObject);
+					}
 				}
 		}
 
 		private void RotateIcon(Vector3 po1, Vector3 po2, GameObject g){
-			
+
 			po1 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
 			po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (1);
 			double deltay = po2.z - po1.z;
@@ -114,7 +118,7 @@ namespace AssemblyCSharp
 			float angle = (float)(Math.Atan (m))* 57.2958F;
 			g.transform.Rotate(new Vector3 (0, 0, angle));//Convertendod de radiano para grao.
 		}
-			
+
 
 		public bool InsertContent(Conductor c, string circuit){
 			if (content.Count >= 9*multiplier) {
@@ -205,7 +209,7 @@ namespace AssemblyCSharp
 					add = true;
 				} else if (totalCircuits.Count >= 4 && !isVertical) {
 					Debug.Log ("Erro! Já existem 3 agrupamentos de circuitos nesse eletroduto, delete um agrupamento para inserir" +
-					" um fio de outro circuito.");
+						" um fio de outro circuito.");
 				}
 
 			}
@@ -235,36 +239,53 @@ namespace AssemblyCSharp
 			}
 			//Debug.Log ("Retornando " + add);
 			if (!add) 
-				if(g!=null) Destroy (g);
+			if(g!=null) Destroy (g);
 			return add;
 		}
 
 		void Update(){
-			//UpdateIcons ();
+			//Vector3 a = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
+			//Vector3 b = gameObject.GetComponent<LineRenderer> ().GetPosition (1);
+			//gameObject.transform.position = (a + b) / 2;
 		}
 
 		private void PrintConduits(){
-			Debug.Log ("New insertion ::");
+			Debug.Log ("Conduits ::");
 			foreach (Conductor con in content) {
 				Debug.Log (con.Print ());
 			}
 		}
 
+		private void RemoveIfContains(Conductor mytarget){
+			Conductor[] array = new Conductor[content.Count];
+			content.CopyTo (array, 0);
+			content = new LinkedList<Conductor> ();
+			for (int i = 0; i < array.Length; i++) {
+				if (!(mytarget.GetSwitchBoard () == array [i].GetSwitchBoard () &&
+				    mytarget.GetMyType () == array [i].GetMyType () &&
+					mytarget.GetConductor () == array [i].GetConductor ()))
+					content.AddLast(array[i]);				
+			}
+		}
+
 		public void RemoveContent(int i){
+			PrintConduits ();
 			Conductor[] array = new Conductor[content.Count];
 			content.CopyTo (array, 0);
 			if (!isVertical) {
 				Destroy (array [i].GetLabel ());
-				content.Remove (array [i]);
+				Debug.Log ("Elemento :::" + array [i].GetMyType());
+				RemoveIfContains (array [i]);
 				if (verticalEdges [0] != null) {
 					Conductor[] arrayAux = new Conductor[verticalEdges [0].content.Count];
 					verticalEdges [0].content.CopyTo (arrayAux, 0);
 					for(int j = 0; j < arrayAux.Length; j++){
-						if (array [i].circuit == arrayAux [j].circuit && array [i].GetMyType() == arrayAux [j].GetMyType()) {
+						if (array [i].GetSwitchBoard() == arrayAux [j].GetSwitchBoard() && array [i].GetMyType() == arrayAux [j].GetMyType()) {
 							arrayAux [j].usedByHowMany--;
 							Debug.Log ("Used by: " + arrayAux [j].usedByHowMany);
-							if (arrayAux [j].usedByHowMany == 0) {
-								verticalEdges [0].content.Remove (arrayAux [j]);
+							if (arrayAux [j].usedByHowMany <= 0) {
+								Debug.Log ("ElementoVert :::" + arrayAux [j].GetMyType());
+								verticalEdges [0].RemoveIfContains(arrayAux [j]);
 								Debug.Log ("Removed");
 							}
 						}
@@ -274,11 +295,12 @@ namespace AssemblyCSharp
 					Conductor[] arrayAux = new Conductor[verticalEdges [1].content.Count];
 					verticalEdges [1].content.CopyTo (arrayAux, 0);
 					for(int j = 0; j < arrayAux.Length; j++){
-						if (array [i].circuit == arrayAux [j].circuit && array [i].GetMyType() == arrayAux [j].GetMyType()) {
+						if (array [i].GetSwitchBoard() == arrayAux [j].GetSwitchBoard() && array [i].GetMyType() == arrayAux [j].GetMyType()) {
 							arrayAux [j].usedByHowMany--;
 							Debug.Log ("Used by: " + arrayAux [j].usedByHowMany);
-							if (arrayAux [j].usedByHowMany == 0) {
-								verticalEdges [1].content.Remove (arrayAux [j]);
+							if (arrayAux [j].usedByHowMany <= 0) {
+								Debug.Log ("ElementoVert :::" + arrayAux [j].GetMyType());
+								verticalEdges [1].RemoveIfContains (arrayAux [j]);
 								Debug.Log ("Removed");
 							}
 						}
@@ -290,6 +312,7 @@ namespace AssemblyCSharp
 				array [i].usedByHowMany--;
 
 			}
+			PrintConduits ();
 			UpdateIcons ();
 		}
 
@@ -301,8 +324,7 @@ namespace AssemblyCSharp
 		public Edge[] GetVEdges(){
 			return verticalEdges;
 		}
-			
+
 	}
 }
-
 
