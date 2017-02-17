@@ -260,6 +260,8 @@ namespace AssemblyCSharp
 		public void OnClickChooseCircuit(){
 			if (isClosed) {
 				ArrayList frontier = new ArrayList ();
+				if (selectedEdges != null)
+					edge = ((Edge)selectedEdges [0]).gameObject;
 				frontier.Add (edge.GetComponent<Edge> ().inv.GetComponent<Node> ());
 				ArrayList explored = new ArrayList ();
 				ArrayList result = new ArrayList ();
@@ -333,17 +335,25 @@ namespace AssemblyCSharp
 						}
 						t.text += s;
 						toInsert.SetType (s);
-						add = myPopup.edge.GetComponent<Edge> ().InsertContent (toInsert,circuit);
-						Conductor aux = info.AddComponent<Conductor> ();
-						aux.SetSwitchBoard (toInsert.GetSwitchBoard ());
-						aux.SetType(toInsert.GetMyType());
-						aux.SetConductor (toInsert.GetConductor ());
+						if (myPopup.selectedEdges == null) {
+							add = myPopup.edge.GetComponent<Edge> ().InsertContent (toInsert, circuit);
+						} else {
+							foreach (Edge e in myPopup.selectedEdges) {
+								Conductor clone = new Conductor (toInsert);
+								add = (e.InsertContent (clone, circuit) || add);
+								Debug.Log ("add: " + add);
+							}
+						}
 					}
 					if (t.name == "Circuit")
 						t.text += " " + circuit;
 				}
 				if (add) {
 					info.GetComponent<PopupInfo> ().SetPopupObject (info);
+					Conductor aux = info.AddComponent<Conductor> () as Conductor;
+					aux.SetSwitchBoard (circuit);
+					aux.SetType (toInsert.GetMyType ());
+					aux.SetConductor (toInsert.GetConductor ());
 					myPopup.myContent.AddLast (info);
 					//Ainda testando labels...apaga aqui quando for mostrar @@@@@@@@@@@@@
 					//toInsert.DrawLabel (myPopup.edge);
@@ -359,12 +369,19 @@ namespace AssemblyCSharp
 		public override void OnClickToDestroy(){
 			GameObject parent = GameObject.Find ("PopupInfo(Clone)");
 			GameObject[] array = new GameObject[parent.GetComponentInParent<PopupInfo>().myContent.Count];
+			Debug.Log ("Counter: " +parent.GetComponentInParent<PopupInfo>().myContent.Count);
 			parent.GetComponentInParent<PopupInfo>().myContent.CopyTo (array, 0);
 			base.OnClickToDestroy ();
 			for (int i = 0; i < array.Length; i++) {
 				if (array [i] == gameObject) {
 					//chama método
-					parent.GetComponentInParent<PopupInfo>().edge.GetComponent<Edge>().RemoveContent(i);
+					if (parent.GetComponent<PopupInfo>().selectedEdges == null)
+						parent.GetComponentInParent<PopupInfo> ().edge.GetComponent<Edge> ().RemoveContent (array[i].GetComponent<Conductor>());
+					else {
+						foreach (Edge e in parent.GetComponent<PopupInfo>().selectedEdges) {
+							e.RemoveContent (array [i].GetComponent<Conductor> ());
+						}
+					}
 					break;
 				}
 			}

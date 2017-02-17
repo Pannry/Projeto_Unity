@@ -14,7 +14,7 @@ namespace AssemblyCSharp
 		private string type;
 		private float offset;
 		private int mycircuit;
-		//especial para arestas verticais.
+		//especial para arestas verticais. Exclusivo uso.
 		public int usedByHowMany;
 
 		public GameObject GetLabel(){
@@ -59,6 +59,15 @@ namespace AssemblyCSharp
 			conductor = conductor;
 			type = type;
 			offset = offset;
+		}
+
+		public Conductor(Conductor c){
+			switchboard = c.switchboard;
+			mycircuit = c.mycircuit;
+			type = c.type;
+			offset = c.offset;
+			conductor = c.conductor;
+			usedByHowMany = 0;
 		}
 
 		public Conductor(){
