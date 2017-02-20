@@ -104,7 +104,7 @@ namespace AssemblyCSharp
 					lastNode = null;
 					tempEdge = null;
 				} else {
-					tempEdge.CreateEdge(tempEdge.inv, node);
+					tempEdge.CreateEdge(tempEdge.firstVertex, node);
 					GetComponent<Controller> ().InsertOnEdges (tempEdge);
 					lastNode.GetComponent<Node>().AddEdge(tempEdge,height);
 					node.GetComponent<Node>().AddEdge(tempEdge,currentHeight);

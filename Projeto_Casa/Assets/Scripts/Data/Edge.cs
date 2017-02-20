@@ -19,7 +19,7 @@ namespace AssemblyCSharp
 	public class Edge : MonoBehaviour
 	{
 
-		public GameObject inv,outv;
+		public GameObject firstVertex,secondVertex;
 		public float height;
 		public bool isVertical = false;
 		public bool isDown = false;
@@ -40,8 +40,8 @@ namespace AssemblyCSharp
 
 		public void CreateEdge (GameObject v1, GameObject v2)
 		{
-			inv = v1;
-			outv = v2;	
+			firstVertex = v1;
+			secondVertex = v2;	
 		}
 
 		//Cada aresta deve atualizar as informacoes de sua aresta vertical, pois quando o usuario remover uma fiacao de uma aresta,
@@ -124,7 +124,7 @@ namespace AssemblyCSharp
 		public bool InsertContent(Conductor c, string circuit){
 			Debug.Log ("Metodo");
 			ArrayList frontier = new ArrayList ();
-			frontier.Add (inv.GetComponent<Node> ());
+			frontier.Add (firstVertex.GetComponent<Node> ());
 			ArrayList explored = new ArrayList ();
 			string s = circuit;
 			s = Regex.Replace (s, "[0-9.]", "");

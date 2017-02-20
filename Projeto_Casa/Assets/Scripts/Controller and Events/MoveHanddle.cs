@@ -32,10 +32,10 @@ namespace AssemblyCSharp
 					//Se Reta horizontal...
 					if (!e.isVertical) {
 						//e.UpdateIcons ();
-						if (lastObject.Equals (e.inv)) {
+						if (lastObject.Equals (e.firstVertex)) {
 							lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
 								lastObject.transform.position.z));
-						} else if (lastObject.Equals (e.outv)) {
+						} else if (lastObject.Equals (e.secondVertex)) {
 							lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,
 								lastObject.transform.position.z));
 						}
@@ -44,7 +44,7 @@ namespace AssemblyCSharp
 						if (lastObject.transform.position.y == e.height) {
 							// Todas as verticais são filhas de um mesmo par de vertices. Só da pra identificar
 							// sob qual par cada uma deve ficar através do ID.
-							if (e.inv.Equals(lastObject)) {
+							if (e.firstVertex.Equals(lastObject)) {
 								lr.SetPosition (0, new Vector3 (lastObject.transform.position.x, lr.GetPosition (0).y,
 									lastObject.transform.position.z));
 								lr.SetPosition (1, new Vector3 (lastObject.transform.position.x, lr.GetPosition (1).y,

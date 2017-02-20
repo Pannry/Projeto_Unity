@@ -17,10 +17,10 @@ namespace AssemblyCSharp
 				}
 				foreach (Edge e in currentNode.GetEdges()) {
 					Node myChild = null;
-					if (!e.inv.Equals (currentNode.gameObject))
-						myChild = e.inv.GetComponent<Node> ();
-					else if (!e.outv.Equals (currentNode.gameObject))
-						myChild = e.outv.GetComponent<Node> ();
+					if (!e.firstVertex.Equals (currentNode.gameObject))
+						myChild = e.firstVertex.GetComponent<Node> ();
+					else if (!e.secondVertex.Equals (currentNode.gameObject))
+						myChild = e.secondVertex.GetComponent<Node> ();
 					if (!explored.Contains (myChild)) {
 						if (!frontier.Contains (myChild)) {
 							frontier.Add (myChild);
@@ -45,10 +45,10 @@ namespace AssemblyCSharp
 				}
 				foreach (Edge e in currentNode.GetEdges()) {
 					Node myChild = null;
-					if (!e.inv.Equals (currentNode.gameObject))
-						myChild = e.inv.GetComponent<Node> ();
-					else if (!e.outv.Equals (currentNode.gameObject))
-						myChild = e.outv.GetComponent<Node> ();
+					if (!e.firstVertex.Equals (currentNode.gameObject))
+						myChild = e.firstVertex.GetComponent<Node> ();
+					else if (!e.secondVertex.Equals (currentNode.gameObject))
+						myChild = e.secondVertex.GetComponent<Node> ();
 					if (!explored.Contains (myChild)) {
 						if (myChild.GetComponent<InfoQadroEletrico> () != null) {
 							InfoQadroEletrico aux = myChild.GetComponent<InfoQadroEletrico> ();

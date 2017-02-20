@@ -262,7 +262,7 @@ namespace AssemblyCSharp
 				ArrayList frontier = new ArrayList ();
 				if (selectedEdges != null)
 					edge = ((Edge)selectedEdges [0]).gameObject;
-				frontier.Add (edge.GetComponent<Edge> ().inv.GetComponent<Node> ());
+				frontier.Add (edge.GetComponent<Edge> ().firstVertex.GetComponent<Node> ());
 				ArrayList explored = new ArrayList ();
 				ArrayList result = new ArrayList ();
 				Search.BreadthFirstSearch (explored, frontier, result);

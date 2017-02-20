@@ -106,7 +106,7 @@ namespace AssemblyCSharp{
 				edges.CopyTo (array, 0);
 				edges = new LinkedList<Edge> ();
 				for (int i = 0; i < array.Length; i++) {
-					if (array [i].outv == null || array [i].inv == null) {
+					if (array [i].secondVertex == null || array [i].firstVertex == null) {
 						foreach (Conductor c in array[i].content) {
 							if (c.GetGameObject () != null)
 								Destroy (c.GetGameObject ());
@@ -236,7 +236,7 @@ namespace AssemblyCSharp{
 			Edge[] es = new Edge[edges.Count];
 			edges.CopyTo (es, 0);
 			for (int i = 0; i < es.Length; i++) {
-				if (es [i].inv.Equals (node) && es[i].isVertical) {
+				if (es [i].firstVertex.Equals (node) && es[i].isVertical) {
 					return es[i];
 				}
 			}
@@ -253,7 +253,7 @@ namespace AssemblyCSharp{
 			Edge[] es = new Edge[edges.Count];
 			edges.CopyTo (es, 0);
 			for (int i = 0; i < es.Length; i++) {
-				if (es [i].inv.Equals (node) && es[i].isVertical && es[i].isDown == isDown) {
+				if (es [i].firstVertex.Equals (node) && es[i].isVertical && es[i].isDown == isDown) {
 					return es[i];
 				}
 			}
