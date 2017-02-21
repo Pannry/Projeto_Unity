@@ -35,7 +35,23 @@ namespace AssemblyCSharp{
 		private LinkedList<Edge> edges;
 		private LinkedList<Node> nodes;
 
-		void Start () {
+        public LinkedList<Edge> Edges
+        {
+            get
+            {
+                return edges;
+            }
+        }
+
+        public LinkedList<Node> Nodes
+        {
+            get
+            {
+                return nodes;
+            }
+        }
+
+        void Start () {
 			xratio = 0;
 			zratio = 0;
 			nodes = new LinkedList<Node> ();
@@ -78,7 +94,8 @@ namespace AssemblyCSharp{
 			string tag = hit.transform.gameObject.tag;
 			if(Input.GetButtonDown("Fire1") && option == 99 && tag != Tags.SemTag()
 				&& tag != Tags.Planta() ){
-				Destroy (hit.transform.gameObject);
+                hit.transform.gameObject.GetComponent<Node>().Remove();
+                Destroy (hit.transform.gameObject);
 				//Node.DestroyNode (nodes,hit.transform.gameObject);
 			}
 		}

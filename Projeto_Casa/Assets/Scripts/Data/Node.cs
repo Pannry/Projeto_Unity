@@ -10,7 +10,13 @@
 		private string label;
 		private string myName;
 
-		void FixedUpdate(){
+        private static Dictionary<string, int> quantidade = new Dictionary<string, int>();
+
+        public static Dictionary<string, int> Quantidade {
+            get {return quantidade;}
+        }
+
+        void FixedUpdate(){
 			RemoveEdge (null);
 		}
 
@@ -19,7 +25,18 @@
 			this.label = label;
 			edges = new LinkedList<Edge> ();
 			this.myName = name;
+            Debug.Log(gameObject.name);
+            if (quantidade.ContainsKey(this.gameObject.name)) {
+                quantidade[this.gameObject.name] += 1;
+            }
+            else {
+                quantidade.Add(gameObject.name, 1);
+            }
 		}
+
+        public void Remove() {
+            quantidade[gameObject.name] -= 1;
+        }
 		public GameObject GetObject(){
 			return gameObject;
 		}
@@ -59,6 +76,8 @@
 			edges.AddLast (e);
 			edges.Last.Value.height = h;
 		}
+
+  
 	}
 	}
 

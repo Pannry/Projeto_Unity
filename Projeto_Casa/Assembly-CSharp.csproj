@@ -62,6 +62,7 @@
      <Compile Include="Assets\Scripts\Data\Node.cs" />
      <Compile Include="Assets\Scripts\Data\Search.cs" />
      <Compile Include="Assets\Scripts\Data\Tags.cs" />
+     <Compile Include="Assets\Scripts\ScrollListaComponentes.cs" />
      <Compile Include="Assets\Scripts\UserInterface\Execute.cs" />
      <Compile Include="Assets\Scripts\UserInterface\HideMe.cs" />
      <Compile Include="Assets\Scripts\UserInterface\JanelaDeErroView.cs" />
