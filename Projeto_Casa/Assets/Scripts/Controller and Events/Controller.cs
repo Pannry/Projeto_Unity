@@ -80,7 +80,7 @@ namespace AssemblyCSharp{
 				GarbageCollector ();
 				//Debug.Log (":edges::" + edges.Count);
 				//Debug.Log (":nodes::" + nodes.Count);
-				GetTubulationSize ();
+				//GetTubulationSize ();
 				Erase ();
 			
 			}	
@@ -224,25 +224,7 @@ namespace AssemblyCSharp{
 				go.transform.Rotate (new Vector3 (0F, 0F, 90F));
 			}
 		}
-
-		/// <summary>
-		/// Gets the size of the tubulation.
-		/// </summary>
-		public void GetTubulationSize(){
-			float result = 0;
-			float resultrw = 0;
-			/*foreach (Edge e in edges) {
-				if (e.gameObject != null) {
-					LineRenderer lr = e.edge.GetComponent<LineRenderer> ();
-					Vector3 reworkedA = new Vector3 (lr.GetPosition (0).x * (1 / xratio),
-						                   lr.GetPosition (0).y, lr.GetPosition (0).z * (1 / zratio));
-					Vector3 reworkedB = new Vector3 (lr.GetPosition (1).x * (1 / xratio),
-						                   lr.GetPosition (1).y, lr.GetPosition (1).z * (1 / zratio));
-					result += Vector3.Distance (lr.GetPosition (0), lr.GetPosition (1));
-					resultrw += Vector3.Distance (reworkedA, reworkedB);
-				}
-			}*/
-		}
+			
 
 		/// <summary>
 		/// Determines whether this node has a vertical edge.
@@ -281,7 +263,7 @@ namespace AssemblyCSharp{
 			Vector3 a = Camera.main.ScreenToWorldPoint((Vector3)_box_start_pos);
 			Vector3 b = Camera.main.ScreenToWorldPoint((Vector3)_box_end_pos);
 
-			Debug.Log ("Start Positon: "+a + " End Position: "+b);
+			//Debug.Log ("Start Positon: "+a + " End Position: "+b);
 			ArrayList selectedEdges = new ArrayList ();
 			foreach (Edge e in edges) {
 				if (!e.isVertical) {
@@ -308,7 +290,7 @@ namespace AssemblyCSharp{
 				PopupInfo.CreateMultiEdgesInfoBox (popupInfo, this, edges, selectedEdges);
 				popupOpen = true;
 			}
-			Debug.Log ("Selected Edges: " + selectedEdges.Count);
+			//Debug.Log ("Selected Edges: " + selectedEdges.Count);
 		}
 
 		public void SetOption(int op){

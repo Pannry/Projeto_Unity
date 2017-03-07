@@ -111,7 +111,7 @@ namespace AssemblyCSharp
 					LineRenderer lr = lastObject.GetComponent<LineRenderer> ();
 					lr.SetPosition (1, new Vector3 (x, height, z));
 					// Aqui, se necessario, sera criada a tubulacao vertical em relacao ao par de vertices
-					//if (/*option == 3 || option == 15*/true) {
+					if (option == 3 || option == 15) {
 						tempEdge = GetComponent<Controller> ().HasVerticalEdge (node, isDown);
 						// Cria aresta com in e outter verteces.
 						if (tempEdge == null) {
@@ -157,7 +157,7 @@ namespace AssemblyCSharp
 						}
 						lastObject.GetComponent<Edge> ().SetVEdges (lastObject.GetComponent<Edge> ().GetVEdges () [0], tempEdge);
 						node.GetComponent<Node> ().AddEdge (tempEdge, height);
-					//}
+					}
 					lastNode = null;
 					tempEdge = null;
 					lastObject = null;

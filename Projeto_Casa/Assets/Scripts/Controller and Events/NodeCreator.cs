@@ -51,9 +51,10 @@ namespace AssemblyCSharp
 			if(Input.GetButtonDown("Fire1")  && tag == Tags.Planta()){
 				DefinePrefab ();
 				GameObject obj= Instantiate(prefab,new Vector3(hit.point.x,height,hit.point.z), Quaternion.identity) as GameObject;
+				obj.transform.SetParent (GameObject.Find ("Objetos").transform, true);
 				obj.transform.Rotate(new Vector3(90F,0F,0F));
 				Node n = obj.AddComponent<Node> ();
-				n.CreateNode (obj.tag, obj.name);
+				n.CreateNode ();
 				GetComponent<Controller> ().InsertOnNodes (n);
 			}
 		}

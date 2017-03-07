@@ -7,8 +7,6 @@
 	public class Node : MonoBehaviour
 	{
 		private LinkedList<Edge> edges;
-		private string label;
-		private string myName;
 
         private static Dictionary<string, int> quantidade = new Dictionary<string, int>();
 
@@ -20,28 +18,27 @@
 			RemoveEdge (null);
 		}
 
-		public void CreateNode (string label, string name)
+		public void CreateNode ()
 		{
-			this.label = label;
 			edges = new LinkedList<Edge> ();
-			this.myName = name;
+			string text = gameObject.GetComponent<Text> ().text;
+			//this.myName = name;
             Debug.Log(gameObject.name);
-            if (quantidade.ContainsKey(this.gameObject.name)) {
-                quantidade[this.gameObject.name] += 1;
+			if (quantidade.ContainsKey(text)) {
+				quantidade[text] += 1;
             }
             else {
-                quantidade.Add(gameObject.name, 1);
+				quantidade.Add(text, 1);
             }
 		}
 
         public void Remove() {
-            quantidade[gameObject.name] -= 1;
+			quantidade[gameObject.GetComponent<Text> ().text] -= 1;
+			if (quantidade [gameObject.GetComponent<Text> ().text] == 0)
+				quantidade.Remove (gameObject.GetComponent<Text> ().text);
         }
 		public GameObject GetObject(){
 			return gameObject;
-		}
-		public string GetLabel(){
-			return label;
 		}
 		public bool Compare(GameObject other){
 			return other.Equals (gameObject);

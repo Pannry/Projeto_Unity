@@ -30,8 +30,15 @@ namespace AssemblyCSharp
 				BreadthFirstSearch (explored, frontier, result);
 			}
 		}
+			
+		public static bool MakeSearch(string objective,Node vertex){
+			ArrayList frontier = new ArrayList ();
+			frontier.Add (vertex);
+			ArrayList explored = new ArrayList ();
+			return BreadthFirstSearch (objective, explored, frontier);
+		}
 		public static bool BreadthFirstSearch(string objective, ArrayList explored, ArrayList frontier){
-			Debug.Log ("Busca");
+			//Debug.Log ("Busca");
 			if (frontier.Count > 0) {
 				Node currentNode = (Node)(frontier [0]);
 				frontier.Remove (currentNode);

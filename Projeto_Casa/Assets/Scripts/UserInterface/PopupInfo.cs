@@ -135,7 +135,7 @@ namespace AssemblyCSharp
 					Vector3 reworkedB = new Vector3 (lr.GetPosition (1).x * (1 / xratio),
 						lr.GetPosition (1).y, lr.GetPosition (1).z * (1 / zratio));
 					result += Vector3.Distance (reworkedA, reworkedB);
-					Debug.Log (result.ToString ());
+					//Debug.Log (result.ToString ());
 					Edge verticalComponentA = ed.GetComponent<Edge> ().GetVEdges () [0];
 					Edge verticalComponentB = ed.GetComponent<Edge> ().GetVEdges () [1];
 					if (verticalComponentA != null || verticalComponentB != null) {
@@ -200,7 +200,7 @@ namespace AssemblyCSharp
 				Vector3 reworkedB = new Vector3 (lr.GetPosition (1).x * (1 / xratio),
 					lr.GetPosition (1).y, lr.GetPosition (1).z * (1 / zratio));
 				float result = Vector3.Distance (reworkedA, reworkedB);
-				Debug.Log (result.ToString ());
+				//Debug.Log (result.ToString ());
 				if (result.ToString ().Length > 6) {
 					Edge verticalComponentA = myEdge.GetComponent<Edge> ().GetVEdges () [0];
 					Edge verticalComponentB = myEdge.GetComponent<Edge> ().GetVEdges () [1];
@@ -266,7 +266,7 @@ namespace AssemblyCSharp
 				ArrayList explored = new ArrayList ();
 				ArrayList result = new ArrayList ();
 				Search.BreadthFirstSearch (explored, frontier, result);
-				Debug.Log ("Total de Quadros: " + result.Count);
+				//Debug.Log ("Total de Quadros: " + result.Count);
 				GameObject popup = Instantiate (popupChooseCircuit);
 				GameObject canvas = GameObject.Find ("Canvas");
 				popup.transform.SetParent (canvas.transform, false);
@@ -335,13 +335,20 @@ namespace AssemblyCSharp
 						}
 						t.text += s;
 						toInsert.SetType (s);
+
+						string resultString = Regex.Match (circuit, @"\d+").Value;
+						int circuit_int = -1;
+						int.TryParse (resultString, out circuit_int);
+						toInsert.SetCircuit(circuit_int);
+						toInsert.SetSwitchBoard (circuit);
+
 						if (myPopup.selectedEdges == null) {
-							add = myPopup.edge.GetComponent<Edge> ().InsertContent (toInsert, circuit);
+							add = myPopup.edge.GetComponent<Edge> ().InsertContent (toInsert,false);
 						} else {
 							foreach (Edge e in myPopup.selectedEdges) {
 								Conductor clone = new Conductor (toInsert);
-								add = (e.InsertContent (clone, circuit) || add);
-								Debug.Log ("add: " + add);
+								add = (e.InsertContent (clone,true) || add);
+								//Debug.Log ("add: " + add);
 							}
 						}
 					}
@@ -369,7 +376,7 @@ namespace AssemblyCSharp
 		public override void OnClickToDestroy(){
 			GameObject parent = GameObject.Find ("PopupInfo(Clone)");
 			GameObject[] array = new GameObject[parent.GetComponentInParent<PopupInfo>().myContent.Count];
-			Debug.Log ("Counter: " +parent.GetComponentInParent<PopupInfo>().myContent.Count);
+			//Debug.Log ("Counter: " +parent.GetComponentInParent<PopupInfo>().myContent.Count);
 			parent.GetComponentInParent<PopupInfo>().myContent.CopyTo (array, 0);
 			base.OnClickToDestroy ();
 			for (int i = 0; i < array.Length; i++) {

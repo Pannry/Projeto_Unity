@@ -14,7 +14,7 @@ namespace AssemblyCSharp
 		private string type;
 		private float offset;
 		private int mycircuit;
-		//especial para arestas verticais. Exclusivo uso.
+		//especial para arestas verticais na hora da deleção. Exclusivo uso.
 		public int usedByHowMany;
 
 		public GameObject GetLabel(){
@@ -50,8 +50,6 @@ namespace AssemblyCSharp
 
 		public void SetCircuit(int i){
 			mycircuit = i;
-			//string s  = GetSwitchBoard
-
 		}
 
 		public Conductor (string conductor, string type, float offset)
@@ -62,11 +60,11 @@ namespace AssemblyCSharp
 		}
 
 		public Conductor(Conductor c){
-			switchboard = c.switchboard;
-			mycircuit = c.mycircuit;
-			type = c.type;
+			SetSwitchBoard(c.switchboard);
+			SetCircuit(c.mycircuit);
+			SetType(c.type);
 			offset = c.offset;
-			conductor = c.conductor;
+			SetConductor(c.conductor);
 			usedByHowMany = 0;
 		}
 

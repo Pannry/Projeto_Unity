@@ -69,7 +69,7 @@ namespace AssemblyCSharp
 						counter++;
 					}
 					if (group.Count == 0 && counter == 0) {
-						Debug.Log ("c1");
+						//Debug.Log ("c1");
 						group.Add (c);
 						po1 = (po1 + po2) / 2;
 						g.transform.position = po1;
@@ -77,7 +77,7 @@ namespace AssemblyCSharp
 						c.DrawLabel (gameObject);
 					}
 					if (group.Count == 1 && counter == 1) {
-						Debug.Log ("c2");
+						//Debug.Log ("c2");
 						group.Add (c);
 						po1 = (po1 + po2) / 2;
 						po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
@@ -87,7 +87,7 @@ namespace AssemblyCSharp
 						c.DrawLabel (gameObject);
 					}
 					if (counter == 2 && counter == 2) {
-						Debug.Log ("c3");
+						//Debug.Log ("c3");
 						group.Add (c);
 						po1 = (po1 + po2) / 2;
 						po1 = (po1 + po2) / 2;
@@ -96,10 +96,10 @@ namespace AssemblyCSharp
 						c.DrawLabel (gameObject);
 					}
 					for (int i = 0; i < group.Count; i++) {
-						Debug.Log ("@Test.");
+						//Debug.Log ("@Test.");
 						if (group [i] != null && c.GetSwitchBoard () == ((Conductor)group [i]).GetSwitchBoard ()
 							&& ((Conductor)group [i]).GetMyType () != c.GetMyType ()) {
-							Debug.Log ("Test.");
+							//Debug.Log ("Test.");
 							g.transform.position = ((Conductor)group [i]).GetGameObject ().transform.position;
 							g.transform.position += ((Conductor)group [i]).GetGameObject ().transform.right * .1F;
 							g.transform.rotation = ((Conductor)group [i]).GetGameObject ().transform.rotation;
@@ -121,17 +121,17 @@ namespace AssemblyCSharp
 		}
 
 
-		public bool InsertContent(Conductor c, string circuit){
-			Debug.Log ("Metodo");
-			ArrayList frontier = new ArrayList ();
-			frontier.Add (firstVertex.GetComponent<Node> ());
-			ArrayList explored = new ArrayList ();
-			string s = circuit;
-			s = Regex.Replace (s, "[0-9.]", "");
-			if (!isVertical && !Search.BreadthFirstSearch (s, explored, frontier)) {
+		public bool InsertContent(Conductor wire, bool boxSelection){
+			//Debug.Log ("Metodo");
+			//Debug.Log(c.GetSwitchBoard() + " 00 " + circuit);
+			string objectiveSwitchBoard =  wire.GetSwitchBoard(); // objetivo da busca
+			objectiveSwitchBoard = Regex.Replace (objectiveSwitchBoard, "[0-9.]", "");
+
+			if (!isVertical && !Search.MakeSearch (objectiveSwitchBoard, firstVertex.GetComponent<Node>())) {
 				Debug.Log("Quadro não pertencente");
 				return false;
 			}
+
 			if (content.Count >= 9*multiplier) {
 				Debug.Log ("Erro, maximo de fios tolerados alcancado.");
 				return false;
@@ -139,57 +139,57 @@ namespace AssemblyCSharp
 				//Uma janela deve retornar um booleano aqui.
 				//Crie outra classe.
 			}
+
 			LinkedList<int> totalCircuitsGroups = new LinkedList<int>();
 			bool rotated = false;
 			bool add = false;
 			// Apagar proxima linha quando na classe popupinfo for adicionada o circuito do condutor.
 			Vector3 po1 = new Vector3(), po2 = new Vector3();
-			GameObject g = null;
+			GameObject icon = null;
 			if (!isVertical) {
-				string resultString = Regex.Match (circuit, @"\d+").Value;
-				int circuit_int = -1;
-				int.TryParse (resultString, out circuit_int);
-				c.SetCircuit(circuit_int);
-				c.SetSwitchBoard (circuit);
 				po1 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
 				po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (1);
-				g = Instantiate (GameObject.Find (c.GetMyType ().ToLower ().Trim ())) as GameObject;
+				icon = Instantiate (GameObject.Find (wire.GetMyType ().ToLower ().Trim ())) as GameObject;
+				icon.transform.SetParent (GameObject.Find ("Objetos").transform, true);
 			}
-			totalCircuitsGroups.AddLast (c.circuit);
-			/*if(isVertical) Debug.Log ("Circuito escolhido:" + c.circuit + " Tipo de fio" + c.GetMyType() +
-				" used by: "+ c.usedByHowMany +" c::"+ content.Count);*/
-			if(g!= null) c.SetGameObject (g);
+
+			totalCircuitsGroups.AddLast (wire.circuit);
+
+			if(icon != null) wire.SetGameObject (icon);
 			// Se nao havia fiacao, comeca adicionando no meio.
 			if (content.Count == 0) {
 				if (!isVertical) {
 					po1 = (po1 + po2) / 2;
-					g.transform.position = po1;
-					RotateIcon (po1, po2, g);
-					c.DrawLabel (gameObject);
+					icon.transform.position = po1;
+					RotateIcon (po1, po2, icon);
+					wire.DrawLabel (gameObject);
 				}
 				add = true;
 			} else {
 				foreach (Conductor x in content) {
-					if (x.GetMyType () == c.GetMyType () && x.circuit == c.circuit ) {
+					if (x.GetMyType () == wire.GetMyType () && x.circuit == wire.circuit ) {
 						if (!isVertical) {
 							// Não aceita mesmo se forem quadros diferentes.
 							// Estou supondo que quadros diferentes não são conexos.
-							Debug.Log ("Erro! Jah existe um fio/cabo de mesmo tipo pertencente a este circuito.");
-							if (g != null)
-								Destroy (g);
+							//Debug.Log ("Erro! Jah existe um fio/cabo de mesmo tipo pertencente a este circuito.");
+							if(!boxSelection)
+							GameObject.Find("Objetos").GetComponent<JanelaDeErroController>()
+								.JanelaOk("Erro! Já existe um fio/cabo de mesmo tipo pertencente a este circuito.",null);
+							if (icon != null)
+								Destroy (icon);
 							return false;
 						} else {
 							x.usedByHowMany++;
 							return true;
 						}
-					} else if (x.circuit == c.circuit) {
+					} else if (x.circuit == wire.circuit) {
 						// Se esse condutor pertence ha um mesmo circuito que esta aqui, entao:
 						add = true;
 						if (!isVertical) {
-							g.transform.position = x.GetGameObject ().transform.position;
-							g.transform.position += x.GetGameObject ().transform.right * .1F;
+							icon.transform.position = x.GetGameObject ().transform.position;
+							icon.transform.position += x.GetGameObject ().transform.right * .1F;
 							if (!rotated) {
-								RotateIcon (po1, po2, g);
+								RotateIcon (po1, po2, icon);
 								rotated = true;
 							}
 						}
@@ -214,43 +214,54 @@ namespace AssemblyCSharp
 						po2 = gameObject.GetComponent<LineRenderer> ().GetPosition (0);
 						po1 = (po1 + po2) / 2;
 					}
-					g.transform.position = po1;
-					RotateIcon (po1, po2, g);
-					c.DrawLabel (gameObject);
+					icon.transform.position = po1;
+					RotateIcon (po1, po2, icon);
+					wire.DrawLabel (gameObject);
 					add = true;
 				} else if (totalCircuitsGroups.Count >= 4 && !isVertical) {
-					Debug.Log ("Erro! Já existem 3 agrupamentos de circuitos nesse eletroduto, delete um agrupamento para inserir" +
-						" um fio de outro circuito.");
+					if(!boxSelection)
+					GameObject.Find("Objetos").GetComponent<JanelaDeErroController>()
+						.JanelaOk("Erro! Já existem 3 agrupamentos de circuitos nesse eletroduto,\n" +
+							" delete um agrupamento para inserir um fio de outro circuito.",null);
+					//Debug.Log ();
 				}
 
 			}
 			// Se ainda houver espaço para inserir na vertical, pode inserir.(Não tem icone, entao nao ha restriçao de grupamento.)
 			if (!add && isVertical && content.Count < 9) 
 				add = true;
+
+			InsertContentInMyVerticalEdges (wire, ref add, icon,boxSelection);
+
+			if (!add) 
+			if(icon!=null) Destroy (icon);
+			return add;
+		}
+
+		private void InsertContentInMyVerticalEdges (Conductor wire, ref bool add, GameObject icon,bool boxSelection)
+		{
 			if (add) {
-				content.AddLast (c);
+				content.AddLast (wire);
 				bool add1 = false;
 				if (verticalEdges [0] != null && !isVertical) {
-					Debug.Log ("Entrou no 0");
-					add1 = verticalEdges [0].InsertContent (new Conductor(c),circuit);
+					//Debug.Log ("Entrou no 0");
+					add1 = verticalEdges [0].InsertContent (new Conductor (wire), boxSelection);
 					add = add && add1;
 				}
-				if (verticalEdges [1] != null&& !isVertical) {
-					Debug.Log ("Entrou no 1");
-					add1 = verticalEdges [1].InsertContent (new Conductor(c),circuit);
+				if (verticalEdges [1] != null && !isVertical) {
+					//Debug.Log ("Entrou no 1");
+					add1 = verticalEdges [1].InsertContent (new Conductor (wire), boxSelection);
 					add = add && add1;
 				}
 				if (!add) {
-					Debug.Log("Erro!");
-					if(g!=null) Destroy (g);
+					//Debug.Log("Erro!");
+					if (icon != null)
+						Destroy (icon);
 				}
 				if (isVertical) {
-					c.usedByHowMany++;
+					wire.usedByHowMany++;
 				}
 			}
-			if (!add) 
-			if(g!=null) Destroy (g);
-			return add;
 		}
 
 		void Update(){
@@ -288,9 +299,6 @@ namespace AssemblyCSharp
 			content.CopyTo (array, 0);
 			int i = -1;
 			for (int j = 0; j < array.Length; j++) {
-				Debug.Log (array [j].GetSwitchBoard () + " VS " + c.GetSwitchBoard ());
-				Debug.Log (array [j].GetConductor () + " VS " + c.GetConductor ());
-				Debug.Log (array [j].GetMyType () +" VS "+ c.GetMyType ());
 				if (array [j].GetSwitchBoard () == c.GetSwitchBoard () &&
 				    array [j].GetConductor () == c.GetConductor () &&
 				    array [j].GetMyType () == c.GetMyType ())
@@ -299,7 +307,7 @@ namespace AssemblyCSharp
 			if (i != -1) {
 				if (!isVertical) {
 					Destroy (array [i].GetLabel ());
-					Debug.Log ("Elemento :::" + array [i].GetMyType ());
+					//Debug.Log ("Elemento :::" + array [i].GetMyType ());
 					RemoveIfContains (array [i]);
 					if (verticalEdges [0] != null) {
 						Conductor[] arrayAux = new Conductor[verticalEdges [0].content.Count];
@@ -307,11 +315,11 @@ namespace AssemblyCSharp
 						for (int j = 0; j < arrayAux.Length; j++) {
 							if (array [i].GetSwitchBoard () == arrayAux [j].GetSwitchBoard () && array [i].GetMyType () == arrayAux [j].GetMyType ()) {
 								arrayAux [j].usedByHowMany--;
-								Debug.Log ("Used by: " + arrayAux [j].usedByHowMany);
+								//Debug.Log ("Used by: " + arrayAux [j].usedByHowMany);
 								if (arrayAux [j].usedByHowMany <= 0) {
-									Debug.Log ("ElementoVert :::" + arrayAux [j].GetMyType ());
+									//Debug.Log ("ElementoVert :::" + arrayAux [j].GetMyType ());
 									verticalEdges [0].RemoveIfContains (arrayAux [j]);
-									Debug.Log ("Removed");
+									//Debug.Log ("Removed");
 								}
 							}
 						}
@@ -322,11 +330,11 @@ namespace AssemblyCSharp
 						for (int j = 0; j < arrayAux.Length; j++) {
 							if (array [i].GetSwitchBoard () == arrayAux [j].GetSwitchBoard () && array [i].GetMyType () == arrayAux [j].GetMyType ()) {
 								arrayAux [j].usedByHowMany--;
-								Debug.Log ("Used by: " + arrayAux [j].usedByHowMany);
+								//Debug.Log ("Used by: " + arrayAux [j].usedByHowMany);
 								if (arrayAux [j].usedByHowMany <= 0) {
-									Debug.Log ("ElementoVert :::" + arrayAux [j].GetMyType ());
+									//Debug.Log ("ElementoVert :::" + arrayAux [j].GetMyType ());
 									verticalEdges [1].RemoveIfContains (arrayAux [j]);
-									Debug.Log ("Removed");
+									//Debug.Log ("Removed");
 								}
 							}
 						}
